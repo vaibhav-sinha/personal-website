@@ -34,7 +34,7 @@ export function flattenNav(sections: NavSection[]): NavItem[] {
 export const courseMeta = {
   title: "Reinforcement Learning Course",
   description:
-    "A practical, developer-focused introduction to reinforcement learning. Focuses on building intuition through exercises, implementing algorithms and interactive examples.",
+    "A practical, developer-focused introduction to reinforcement learning. Focuses on building intuition through discussions, exercises, algorithm implementations, and interactive simulations.",
 };
 
 export const rlCourseNav: NavSection[] = [

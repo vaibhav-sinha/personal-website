@@ -1,0 +1,32 @@
+---
+interface Props {
+  href: string;
+  bookTitle: string;
+  chapter: string | number;
+  section?: string;
+  authors?: string;
+}
+
+const { href, bookTitle, chapter, section, authors } = Astro.props;
+
+const chapterLabel = typeof chapter === "number" ? `Chapter ${chapter}` : chapter;
+const readingTarget = section ? `${chapterLabel}, ${section}` : chapterLabel;
+---
+
+<aside class="not-prose my-8 border-l-2 border-(--color-accent-dim) bg-(--color-surface) px-5 py-4">
+  <p class="mb-2 font-mono text-xs uppercase tracking-widest text-(--color-muted)">
+    Reading
+  </p>
+  <p class="font-serif text-base leading-relaxed text-(--color-prose)">
+    Read <strong class="font-medium text-(--color-text)">{readingTarget}</strong> from{" "}
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener"
+      class="text-(--color-accent) underline decoration-(--color-accent-dim) underline-offset-2 transition-colors hover:text-(--color-text-bright)"
+    >
+      {bookTitle}
+    </a>
+    {authors && <span class="text-(--color-muted)"> by {authors}</span>}.
+  </p>
+</aside>

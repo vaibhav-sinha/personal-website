@@ -21,7 +21,7 @@ const { title, description, currentSlug, prev = null, next = null } = Astro.prop
     <header class="border-b border-(--color-border) bg-(--color-surface)">
       <div class="mx-auto flex max-w-6xl items-center gap-4 px-6 py-4">
         <a href="/" class="font-mono text-sm text-(--color-muted) link-subtle">Home</a>
-        <span class="text-(--color-border)">/</span>
+        <span class="text-(--color-muted)" aria-hidden="true">/</span>
         <a href="/rl-course" class="font-mono text-sm text-(--color-text) link-subtle">{courseMeta.title}</a>
       </div>
     </header>

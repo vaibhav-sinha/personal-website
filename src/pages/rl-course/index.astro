@@ -1,5 +1,6 @@
 ---
 import CourseLayout from "../../layouts/CourseLayout.astro";
+import ExternalResource from "../../components/content/ExternalResource.astro";
 import { courseMeta, getNavItemHref, rlCourseNav } from "../../data/rl-course-nav";
 import { getFirstLessonSlug } from "../../lib/course";
 
@@ -9,12 +10,72 @@ const firstLesson = getFirstLessonSlug();
 <CourseLayout title={courseMeta.title} description={courseMeta.description}>
   <div class="prose prose-lesson">
     <p>
-      A practical, developer-focused introduction to reinforcement learning. This course builds intuition before formulas, with exercises, implementations, and interactive examples you can run locally.
+      If you are here, you have probably already heard about reinforcement learning (RL) and are interested in learning more about it. 
+    </p>
+    <p>
+      While this is a course, it does not cover the theory itself. 
+      It relies on external resources for the theory (books, videos, papers, etc.) and provides supplementary material which you can use to build a deeper understanding of the subject. 
+      This includes discussions, exercises, algorithm implementations, and interactive simulations.
+      I created these resources to help me learn the subject myself, and I hope they can help you too.
+    </p>
+    <p>
+      When learning a new subject, it is easy to race through the foundational material quickly.
+      In my experience, the foundational topics seem quite simple and it is easy to think you have understood them while you really haven't.
+      The lack of understanding and intuition becomes apparent when you move to more complex topics.
+    </p>
+    <p>
+      In my experience, it is easier to build a strong foundation by doing the following:
+      <ul>
+        <li>
+          Spending time thinking about the concepts.
+        </li>
+        <li>
+          Writing down and possibly deriving the formulas yourself.
+        </li>
+        <li>
+          Implementing the algorithms and recreating the results you see in the literature.
+        </li>
+        <li>
+          Building your own environments and playing around with the algorithms.
+        </li>
+        <li>
+          Thinking ahead about what modifications are possible to the algorithms and how they could be useful.
+        </li>
+      </ul>
+      The resources provided here are meant to help you do the above.
+    </p>
+    <p>
+      For each topic, we will link to external resources that you can use to learn the theory.
+      Once you have read the theory, come back here and test your understanding with exercises and simulations.
+      Move on to the next topic once you are ready.
+    </p>
+    <p>
+      We will use Introduction to Reinforcement Learning by Sutton and Barto as the main textbook — the standard reference for RL theory and algorithms.
+      The PDF version of the book is available for free.
+    </p>
+
+    <ExternalResource
+      href="http://incompleteideas.net/book/the-book.html"
+      title="Reinforcement Learning: An Introduction"
+      description="Sutton & Barto — the standard reference for RL theory and algorithms."
+      type="book"
+    />
+
+    <p>
+      Another important aspect of this course is that we will lean heavily on AI to help us learn the subject.
+      Hence, instead of discussing everything in the content, or answering all the questions, we will link to AI so you can get the answers yourself.
+      The links we provide will have the prompt with the full context so that AI can give you meaningful answers.
+      We use AI for this purpose because it is interactive and you can clear your doubts instantly.
+    </p>
+
+    <p>
+      If you find the course useful, or if you would like to suggest improvements/corrections, please send me an email at <a href="mailto:hi@vaibhavsinha.me" target="_blank" rel="noopener" class="text-(--color-accent)!">hi@vaibhavsinha.me</a>.
+      I would love to hear from you!
     </p>
 
     {
       firstLesson && (
-        <p>
+        <p class="pt-10">
           <a
             href={`/rl-course/${firstLesson}`}
             class="not-prose inline-block rounded border border-(--color-border) px-4 py-2 font-mono text-sm text-(--color-text) transition-colors hover:border-(--color-accent) hover:text-(--color-accent)"
@@ -36,7 +97,7 @@ const firstLesson = getFirstLessonSlug();
                 <li>
                   <a
                     href={getNavItemHref(item.slug)}
-                    class="nav-link !text-[0.875rem] !text-(--color-prose)"
+                    class="nav-link text-[0.875rem]! text-(--color-prose)!"
                   >
                     {item.title}
                   </a>

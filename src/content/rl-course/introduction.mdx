@@ -1,52 +1,133 @@
 ---
 title: Introduction
-description: What reinforcement learning is, how it differs from supervised learning, and what this course covers.
+description: What is reinforcement learning and how does it differ from supervised and unsupervised learning
 section: Foundations
 order: 1
 ---
 
+import BookReading from "../../components/content/BookReading.astro";
 import CodeBlock from "../../components/content/CodeBlock.astro";
+import Question from "../../components/content/Question.astro";
+import RLProblem from "../../components/content/RLProblem.astro";
 import ThinkingExercise from "../../components/content/ThinkingExercise.astro";
-import ExternalResource from "../../components/content/ExternalResource.astro";
+import { carGameProblem } from "../../data/rl-course/car-game-problem";
+import { carGamePrompt, carGameThinkingExerciseApi, carGameThinkingExerciseImages } from "../../data/rl-course/car-game-prompts";
+import { policyPrompt, policyThinkingExercisePrompt } from "../../data/rl-course/policy-prompts";
 
-Reinforcement learning (RL) is about learning what to do — how to map situations to actions — so as to maximize a cumulative reward. Unlike supervised learning, an RL agent is not told which actions are correct. It must discover them through trial and error.
+Reinforcement learning (RL) is about learning what to do — how to map situations to actions — so as to maximize a cumulative reward.
+To get a high level idea about RL, read the introductory chapter from the Sutton and Barto book and then come back here.
 
-## The basic loop
-
-At each timestep, an agent observes the state of its environment, takes an action, and receives a reward signal. The goal is to learn a policy that maximizes expected cumulative reward over time.
-
-<CodeBlock
-  lang="python"
-  title="agent_loop.py"
-  code={`
-def agent_loop(env, policy):
-    state = env.reset()
-    total_reward = 0
-
-    while not env.done:
-        action = policy(state)
-        state, reward, done = env.step(action)
-        total_reward += reward
-
-    return total_reward
-`}
-/>
-
-## What you will learn
-
-This course builds intuition before formulas. We start with Markov decision processes, move through value functions and policy optimization, and connect theory to code you can run.
-
-<ExternalResource
+<BookReading
   href="http://incompleteideas.net/book/the-book.html"
-  title="Reinforcement Learning: An Introduction"
-  description="Sutton & Barto — the standard reference for RL theory and algorithms."
-  type="book"
+  bookTitle="Reinforcement Learning: An Introduction"
+  authors="Sutton & Barto"
+  chapter={1}
 />
 
-<ThinkingExercise answer="In supervised learning, each example comes with a correct label. In RL, feedback is a scalar reward that may be delayed, sparse, or noisy — the agent must infer good behavior from consequences.">
-  Consider a robot learning to walk. Why is this closer to reinforcement learning than to supervised classification?
+Now that you have a general understanding of the motivation behind RL, let's think about some things discussed in the chapter.
+
+## State and Action
+
+States and actions are quite fundamental to RL. Let's take an example to think deeper about them.
+
+<RLProblem
+  environment={carGameProblem.environment}
+  objective={carGameProblem.objective}
+  actions={carGameProblem.actions}
+/>
+
+<ThinkingExercise>
+  If the game engine had an API to get any information out of it, what properties would you use to define the state of the game at any moment?
 </ThinkingExercise>
 
-## How to use this course
+Now, based on your choice of properties, answer the following questions:
 
-Read each lesson in order. Run the code examples, try the thinking exercises before peeking at answers, and use the interactive simulations to build intuition. External resources are optional deep dives.
+<div class="not-prose my-4 space-y-4">
+  <Question prompt={carGamePrompt("Did you include position of the car and the obstacles in your state?")}>
+    Did you include position of the car and the obstacles in your state?
+  </Question>
+
+  <Question prompt={carGamePrompt("Did you treat the position as a continuous variable or a discrete one?")}>
+    Did you treat the position as a continuous variable or a discrete one?
+  </Question>
+
+  <Question prompt={carGamePrompt("If position is assumed to be continuous, would that mean that the number of states are infinite?")}>
+    If position is assumed to be continuous, would that mean that the number of states are infinite?
+  </Question>
+
+  <Question prompt={carGamePrompt("Based on your reading of the first chapter, do you think RL can deal with infinite number of states or not?")}>
+    Based on your reading of the first chapter, do you think RL can deal with infinite number of states or not?
+  </Question>
+
+  <Question prompt={carGamePrompt("Did you include the velocity of the car in the state? If yes, why is it needed? If not, why not?")}>
+    Did you include the velocity of the car in the state? If yes, why is it needed? If not, why not?
+  </Question>
+
+  <Question prompt={carGamePrompt("Did you include past position or velocity of the car in the state? Is it relevant to include those in the current state to make a decision about what action to take at the current time?")}>
+    Did you include past position or velocity of the car in the state? Is it relevant to include those in the current state to make a decision about what action to take at the current time?
+  </Question>
+</div>
+
+Let's make a small modification now.
+
+<ThinkingExercise>
+  If the game engine could only provide you images of the game, what information would you use to define the state of the game at any moment?
+</ThinkingExercise>
+
+Based on your choice, answer the following questions:
+
+<div class="not-prose my-4 space-y-4">
+  <Question prompt={carGamePrompt("Now what would you include in the state?", carGameThinkingExerciseImages)}>
+    Now what would you include in the state?
+  </Question>
+
+  <Question prompt={carGamePrompt("Is it required to include the images of the past in the current state representation? Why or why not?", carGameThinkingExerciseImages)}>
+    Is it required to include the images of the past in the current state representation? Why or why not?
+  </Question>
+
+  <Question prompt={carGamePrompt("For the car game, ignoring the state representation, do you think where the car will be in the future depends on only the present state of the car or also on the past?", carGameThinkingExerciseImages)}>
+    For the car game, ignoring the state representation, do you think where the car will be in the future depends on only the present state of the car or also on the past?
+  </Question>
+
+  <Question prompt={carGamePrompt("In the first state representation we did not need to include the past while in the second we do. The game environment and the problem statement is the same. Is there a contradiction here?", [carGameThinkingExerciseApi, carGameThinkingExerciseImages])}>
+    In the first state representation we did not need to include the past while in the second we do. The game environment and the problem statement is the same. Is there a contradiction here?
+  </Question>
+</div>
+
+Using the above scenarios, we see the distinction between `state` and `observation`.
+State is the true representation of the environment at a given time. Observation is what we get to see. And the observation can be partial.
+Hence, even if the future can be fully determined based on the current state and action, it might still require us to have access to previous observations to be able to figure out the future.
+In this case, the past observations are essentially being used to figure out the missing data in the current state.
+
+## Policy
+
+The policy is essentially a mapping from states to actions. It tells what action the agent would take when it is in a given state.
+
+Answer the following questions about policies:
+
+<div class="not-prose my-4 space-y-4">
+  <Question prompt={policyPrompt("The book says that policies may be stochastic. What does that mean?")}>
+    The book says that policies may be stochastic. What does that mean?
+  </Question>
+
+  <Question prompt={policyPrompt("Why would you want to have stochastic policies?")}>
+    Why would you want to have stochastic policies?
+  </Question>
+
+  <Question prompt={policyPrompt("Is it ever a good idea to have stochastic policies if the environment is not stochastic?")}>
+    Is it ever a good idea to have stochastic policies if the environment is not stochastic?
+  </Question>
+
+  <Question prompt={policyPrompt("Is it ever a good idea to have stochastic policies if the environment is not stochastic and also stationary?")}>
+    Is it ever a good idea to have stochastic policies if the environment is not stochastic and also stationary?
+  </Question>
+
+  <Question prompt={policyPrompt("Let's say you are in state S at time t. What factors would you consider to determine what action A you should take next?")}>
+    Let's say you are in state `S` at time `t`. What factors would you consider to determine what action `A` you should take next?
+  </Question>
+</div>
+
+
+<ThinkingExercise prompt={policyThinkingExercisePrompt("An environment was never formally defined. Based on the questions above and after discussing them with AI, can you now explain what is an environment and what does it mean for an environment to be stochastic or stationary?")}>
+  An environment was never formally defined. Based on the questions above and after discussing them with AI, can you now explain what is an environment and what does it mean for an environment to be stochastic or stationary?
+</ThinkingExercise>
