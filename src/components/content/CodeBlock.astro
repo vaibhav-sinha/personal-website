@@ -14,9 +14,9 @@ interface Props {
 const { code, lang = "python", title, showLineNumbers = false } = Astro.props;
 ---
 
-<figure class="not-prose my-8 overflow-hidden rounded border border-neutral-200 bg-white">
+<figure class="not-prose my-8 overflow-hidden rounded-md border border-[var(--color-border)] bg-[var(--color-code-bg)]">
   {title && (
-    <figcaption class="border-b border-neutral-200 bg-neutral-50 px-4 py-2 font-mono text-xs text-neutral-500">
+    <figcaption class="border-b border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 font-mono text-xs text-[var(--color-muted)]">
       {title}
     </figcaption>
   )}
@@ -24,7 +24,7 @@ const { code, lang = "python", title, showLineNumbers = false } = Astro.props;
     <Code
       code={code.trim()}
       lang={lang}
-      theme="github-light"
+      theme="github-dark"
       class="m-0 p-4 font-mono text-sm leading-relaxed"
     />
   </div>

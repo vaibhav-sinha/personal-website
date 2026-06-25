@@ -11,16 +11,16 @@ const isExternal = href.startsWith("http");
 
 <a
   href={href}
-  class="group block py-4 transition-colors hover:bg-neutral-50"
+  class="group block py-2.5 transition-colors"
   {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
 >
   <div class="flex items-baseline justify-between gap-4">
-    <span class="font-medium text-neutral-900 group-hover:underline group-hover:decoration-neutral-300 group-hover:underline-offset-2">
+    <span class="font-medium text-[var(--color-text)] group-hover:text-[var(--color-accent)]">
       {title}
     </span>
     {isExternal && (
-      <span class="shrink-0 text-xs text-neutral-400" aria-hidden="true">↗</span>
+      <span class="shrink-0 font-mono text-xs text-[var(--color-muted)]" aria-hidden="true">↗</span>
     )}
   </div>
-  <p class="mt-1 text-sm leading-relaxed text-neutral-600">{description}</p>
+  <p class="mt-0.5 text-[0.8125rem] leading-relaxed text-[var(--color-muted)]">{description}</p>
 </a>

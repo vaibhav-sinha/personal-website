@@ -46,27 +46,27 @@ export default function Simulation() {
   const grid = createGrid();
 
   return (
-    <div className="not-prose my-8 rounded border border-neutral-200 bg-white p-5">
+    <div className="not-prose my-8 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] p-5">
       <div className="mb-4 flex items-baseline justify-between gap-4">
         <div>
-          <p className="font-sans text-xs font-medium uppercase tracking-widest text-neutral-500">
+          <p className="font-mono text-xs uppercase tracking-widest text-[var(--color-muted)]">
             Interactive simulation
           </p>
-          <p className="mt-1 font-serif text-sm text-neutral-600">
+          <p className="mt-1 font-serif text-sm text-[var(--color-muted)]">
             Move the agent toward the goal. Each step updates a running value estimate.
           </p>
         </div>
         <button
           type="button"
           onClick={reset}
-          className="shrink-0 rounded border border-neutral-200 px-3 py-1.5 font-sans text-xs text-neutral-700 transition-colors hover:bg-neutral-50"
+          className="shrink-0 rounded border border-[var(--color-border)] px-3 py-1.5 font-mono text-xs text-[var(--color-text)] transition-colors hover:border-[var(--color-muted)]"
         >
           Reset
         </button>
       </div>
 
       <div
-        className="mx-auto grid w-fit gap-1 rounded border border-neutral-200 bg-neutral-100 p-2"
+        className="mx-auto grid w-fit gap-1 rounded border border-[var(--color-border)] bg-[var(--color-code-bg)] p-2"
         style={{ gridTemplateColumns: `repeat(${GRID_SIZE}, 3.5rem)` }}
       >
         {grid.map((row, rowIndex) =>
@@ -78,18 +78,18 @@ export default function Simulation() {
             return (
               <div
                 key={cellKey(rowIndex, colIndex)}
-                className="relative flex h-14 w-14 flex-col items-center justify-center rounded border border-neutral-200 bg-white text-center"
+                className="relative flex h-14 w-14 flex-col items-center justify-center rounded border border-[var(--color-border)] bg-[var(--color-surface-raised)] text-center"
               >
                 {isGoalCell && (
-                  <span className="font-sans text-[10px] uppercase tracking-wide text-neutral-400">
+                  <span className="font-mono text-[10px] uppercase tracking-wide text-[var(--color-muted)]">
                     Goal
                   </span>
                 )}
                 {isAgent && (
-                  <span className="absolute inset-0 m-auto size-4 rounded-full bg-neutral-800" />
+                  <span className="absolute inset-0 m-auto size-4 rounded-full bg-[var(--color-accent)]" />
                 )}
                 {value !== undefined && !isAgent && (
-                  <span className="font-mono text-[10px] text-neutral-500">
+                  <span className="font-mono text-[10px] text-[var(--color-muted)]">
                     {value.toFixed(2)}
                   </span>
                 )}
@@ -106,14 +106,14 @@ export default function Simulation() {
             type="button"
             onClick={() => moveAgent(dir)}
             disabled={isGoal}
-            className="rounded border border-neutral-200 px-3 py-1.5 font-sans text-xs capitalize text-neutral-700 transition-colors hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-40"
+            className="rounded border border-[var(--color-border)] px-3 py-1.5 font-mono text-xs capitalize text-[var(--color-text)] transition-colors hover:border-[var(--color-muted)] disabled:cursor-not-allowed disabled:opacity-40"
           >
             {dir}
           </button>
         ))}
       </div>
 
-      <p className="mt-4 text-center font-mono text-xs text-neutral-500">
+      <p className="mt-4 text-center font-mono text-xs text-[var(--color-muted)]">
         Steps: {steps}
         {isGoal && " · Goal reached"}
       </p>

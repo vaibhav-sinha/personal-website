@@ -7,21 +7,21 @@ interface Props {
 }
 
 const { prev, next } = Astro.props;
+
+const cardClass =
+  "group flex max-w-[45%] flex-col gap-1 rounded border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 transition-colors hover:border-[var(--color-muted)]";
 ---
 
 {
   (prev || next) && (
     <nav
-      class="not-prose mt-16 flex items-stretch justify-between gap-4 border-t border-neutral-200 pt-8"
+      class="not-prose mt-16 flex items-stretch justify-between gap-4 border-t border-[var(--color-border)] pt-8"
       aria-label="Lesson navigation"
     >
       {prev ? (
-        <a
-          href={`/rl-course/${prev.id}`}
-          class="group flex max-w-[45%] flex-col gap-1 rounded border border-neutral-200 px-4 py-3 transition-colors hover:border-neutral-300 hover:bg-neutral-50"
-        >
-          <span class="text-xs uppercase tracking-widest text-neutral-500">Previous</span>
-          <span class="font-sans text-sm font-medium text-neutral-900 group-hover:underline group-hover:decoration-neutral-300 group-hover:underline-offset-2">
+        <a href={`/rl-course/${prev.id}`} class:list={[cardClass]}>
+          <span class="font-mono text-xs uppercase tracking-widest text-[var(--color-muted)]">Previous</span>
+          <span class="font-sans text-sm font-medium text-[var(--color-text)] group-hover:text-[var(--color-accent)]">
             {prev.data.title}
           </span>
         </a>
@@ -30,12 +30,9 @@ const { prev, next } = Astro.props;
       )}
 
       {next ? (
-        <a
-          href={`/rl-course/${next.id}`}
-          class="group flex max-w-[45%] flex-col items-end gap-1 rounded border border-neutral-200 px-4 py-3 text-right transition-colors hover:border-neutral-300 hover:bg-neutral-50"
-        >
-          <span class="text-xs uppercase tracking-widest text-neutral-500">Next</span>
-          <span class="font-sans text-sm font-medium text-neutral-900 group-hover:underline group-hover:decoration-neutral-300 group-hover:underline-offset-2">
+        <a href={`/rl-course/${next.id}`} class:list={[cardClass, "items-end text-right"]}>
+          <span class="font-mono text-xs uppercase tracking-widest text-[var(--color-muted)]">Next</span>
+          <span class="font-sans text-sm font-medium text-[var(--color-text)] group-hover:text-[var(--color-accent)]">
             {next.data.title}
           </span>
         </a>

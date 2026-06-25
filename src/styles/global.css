@@ -1,32 +1,39 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-@import "@fontsource/inter/400.css";
-@import "@fontsource/inter/500.css";
-@import "@fontsource/inter/600.css";
-@import "@fontsource/source-serif-4/400.css";
-@import "@fontsource/source-serif-4/600.css";
-@import "@fontsource/jetbrains-mono/400.css";
+@import "@fontsource/ibm-plex-sans/400.css";
+@import "@fontsource/ibm-plex-sans/500.css";
+@import "@fontsource/ibm-plex-sans/600.css";
+@import "@fontsource/literata/400.css";
+@import "@fontsource/literata/600.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
 
 :root {
-  --color-bg: #fafafa;
-  --color-surface: #ffffff;
-  --color-text: #171717;
-  --color-muted: #737373;
-  --color-border: #e5e5e5;
-  --color-accent: #404040;
+  --color-bg: #0a0a0b;
+  --color-surface: #111113;
+  --color-surface-raised: #18181b;
+  --color-text: #e4e4e7;
+  --color-text-bright: #fafafa;
+  --color-muted: #71717a;
+  --color-border: #27272a;
+  --color-accent: #60a5fa;
+  --color-accent-dim: #3b82f6;
+  --color-code-bg: #0f0f12;
+  --color-prose: #d4d4d8;
   --content-max: 42rem;
-  --sidebar-width: 16rem;
+  --sidebar-width: 14rem;
 }
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "Source Serif 4", ui-serif, Georgia, serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Literata", ui-serif, Georgia, serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 }
 
 html {
   scroll-behavior: smooth;
+  color-scheme: dark;
 }
 
 body {
@@ -41,20 +48,67 @@ a {
   color: inherit;
 }
 
+/* ── Navigation ── */
+
+.nav-section-label {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.nav-link {
+  display: block;
+  padding: 0.3rem 0.5rem;
+  margin-inline: -0.5rem;
+  border-radius: 0.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.nav-link:hover {
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.nav-link-active {
+  color: var(--color-accent);
+}
+
+.nav-link-parent-active {
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.nav-children {
+  margin-top: 0.125rem;
+  margin-bottom: 0.25rem;
+  margin-left: 0.375rem;
+  padding-left: 0.625rem;
+  border-left: 1px solid var(--color-border);
+}
+
+/* ── Prose ── */
+
 .prose-lesson {
-  --tw-prose-body: var(--color-text);
-  --tw-prose-headings: var(--color-text);
+  --tw-prose-body: var(--color-prose);
+  --tw-prose-headings: var(--color-text-bright);
+  --tw-prose-lead: var(--color-muted);
   --tw-prose-links: var(--color-accent);
   --tw-prose-bold: var(--color-text);
   --tw-prose-counters: var(--color-muted);
   --tw-prose-bullets: var(--color-muted);
   --tw-prose-hr: var(--color-border);
-  --tw-prose-quotes: var(--color-text);
+  --tw-prose-quotes: var(--color-prose);
   --tw-prose-quote-borders: var(--color-border);
   --tw-prose-captions: var(--color-muted);
   --tw-prose-code: var(--color-text);
-  --tw-prose-pre-code: var(--color-text);
-  --tw-prose-pre-bg: #f5f5f5;
+  --tw-prose-pre-code: #c4c4cc;
+  --tw-prose-pre-bg: var(--color-code-bg);
   --tw-prose-th-borders: var(--color-border);
   --tw-prose-td-borders: var(--color-border);
 
@@ -67,23 +121,51 @@ a {
   letter-spacing: -0.02em;
 }
 
+.prose-lesson :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  padding: 0.1em 0.35em;
+  border-radius: 0.25rem;
+  color: #a5b4fc;
+  font-weight: 400;
+}
+
 .prose-lesson :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   text-decoration: none;
 }
 
 .prose-lesson :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)):hover {
   text-decoration: underline;
-  text-underline-offset: 2px;
-  text-decoration-color: var(--color-text);
+  text-underline-offset: 3px;
+  text-decoration-color: var(--color-accent);
 }
 
 .link-subtle {
   text-decoration: none;
-  transition: text-decoration-color 0.15s ease;
+  transition: color 0.15s ease;
 }
 
 .link-subtle:hover {
+  color: var(--color-accent);
   text-decoration: underline;
   text-underline-offset: 3px;
-  text-decoration-color: var(--color-text);
+  text-decoration-color: var(--color-accent);
+}
+
+/* ── KaTeX (dark) ── */
+
+.katex {
+  color: var(--color-prose);
+}
+
+.katex .mord,
+.katex .mop,
+.katex .mbin,
+.katex .mrel,
+.katex .mopen,
+.katex .mclose,
+.katex .mpunct {
+  color: inherit;
 }

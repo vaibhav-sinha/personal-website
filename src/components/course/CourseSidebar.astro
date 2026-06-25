@@ -11,24 +11,21 @@ interface Props {
 
 const { currentSlug } = Astro.props;
 
-const linkClass = (isActive: boolean) =>
-  [
-    "block rounded px-2 py-1.5 text-sm transition-colors",
-    isActive
-      ? "bg-neutral-100 font-medium text-neutral-900"
-      : "text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900",
-  ] as const;
+function parentLinkClass(isActive: boolean, isParentActive: boolean, hasChildren: boolean) {
+  const classes = ["nav-link"];
+  if (isActive) classes.push("nav-link-active");
+  else if (hasChildren && isParentActive) classes.push("nav-link-parent-active");
+  return classes;
+}
 ---
 
-<aside class="hidden min-h-full w-[var(--sidebar-width)] shrink-0 border-r border-neutral-200 bg-white lg:block">
-  <nav class="sticky top-0 max-h-screen overflow-y-auto px-5 py-8" aria-label="Course navigation">
+<aside class="hidden min-h-full w-[var(--sidebar-width)] shrink-0 border-r border-[var(--color-border)] lg:block">
+  <nav class="sticky top-0 max-h-screen overflow-y-auto px-6 py-8" aria-label="Course navigation">
     {
       rlCourseNav.map((group) => (
         <div class="mb-8 last:mb-0">
-          <p class="mb-3 text-xs font-medium uppercase tracking-widest text-neutral-500">
-            {group.section}
-          </p>
-          <ul class="space-y-1">
+          <p class="nav-section-label mb-3">{group.section}</p>
+          <ul>
             {group.items.map((item) => {
               const isParentActive = isNavItemActive(item, currentSlug);
               const isCurrentPage = currentSlug === item.slug;
@@ -38,23 +35,20 @@ const linkClass = (isActive: boolean) =>
                 <li>
                   <a
                     href={getNavItemHref(item.slug)}
-                    class:list={[
-                      linkClass(isCurrentPage || (isParentActive && !hasChildren)),
-                      hasChildren && isParentActive && !isCurrentPage && "font-medium text-neutral-900",
-                    ]}
+                    class:list={parentLinkClass(isCurrentPage, isParentActive, !!hasChildren)}
                     aria-current={isCurrentPage ? "page" : undefined}
                   >
                     {item.title}
                   </a>
                   {hasChildren && (
-                    <ul class="mt-1 space-y-1 pl-3">
+                    <ul class="nav-children">
                       {item.children!.map((child) => {
                         const isChildActive = currentSlug === child.slug;
                         return (
                           <li>
                             <a
                               href={getNavItemHref(child.slug)}
-                              class:list={linkClass(isChildActive)}
+                              class:list={["nav-link", isChildActive && "nav-link-active"]}
                               aria-current={isChildActive ? "page" : undefined}
                             >
                               {child.title}
@@ -74,18 +68,16 @@ const linkClass = (isActive: boolean) =>
   </nav>
 </aside>
 
-<details class="border-b border-neutral-200 bg-white lg:hidden">
-  <summary class="cursor-pointer px-6 py-4 text-sm font-medium text-neutral-700">
+<details class="border-b border-[var(--color-border)] bg-[var(--color-surface)] lg:hidden">
+  <summary class="cursor-pointer px-6 py-4 font-mono text-sm text-[var(--color-text)]">
     Course contents
   </summary>
-  <nav class="border-t border-neutral-200 px-6 py-4" aria-label="Course navigation">
+  <nav class="border-t border-[var(--color-border)] px-6 py-4" aria-label="Course navigation">
     {
       rlCourseNav.map((group) => (
         <div class="mb-6 last:mb-0">
-          <p class="mb-2 text-xs font-medium uppercase tracking-widest text-neutral-500">
-            {group.section}
-          </p>
-          <ul class="space-y-1">
+          <p class="nav-section-label mb-2">{group.section}</p>
+          <ul>
             {group.items.map((item) => {
               const isParentActive = isNavItemActive(item, currentSlug);
               const isCurrentPage = currentSlug === item.slug;
@@ -95,30 +87,19 @@ const linkClass = (isActive: boolean) =>
                 <li>
                   <a
                     href={getNavItemHref(item.slug)}
-                    class:list={[
-                      "block rounded px-2 py-1.5 text-sm",
-                      isCurrentPage || (isParentActive && !hasChildren)
-                        ? "bg-neutral-100 font-medium text-neutral-900"
-                        : "text-neutral-600",
-                      hasChildren && isParentActive && !isCurrentPage && "font-medium text-neutral-900",
-                    ]}
+                    class:list={parentLinkClass(isCurrentPage, isParentActive, !!hasChildren)}
                   >
                     {item.title}
                   </a>
                   {hasChildren && (
-                    <ul class="mt-1 space-y-1 pl-3">
+                    <ul class="nav-children">
                       {item.children!.map((child) => {
                         const isChildActive = currentSlug === child.slug;
                         return (
                           <li>
                             <a
                               href={getNavItemHref(child.slug)}
-                              class:list={[
-                                "block rounded px-2 py-1.5 text-sm",
-                                isChildActive
-                                  ? "bg-neutral-100 font-medium text-neutral-900"
-                                  : "text-neutral-600",
-                              ]}
+                              class:list={["nav-link", isChildActive && "nav-link-active"]}
                             >
                               {child.title}
                             </a>

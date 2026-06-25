@@ -7,18 +7,17 @@ const firstLesson = getFirstLessonSlug();
 ---
 
 <CourseLayout title={courseMeta.title} description={courseMeta.description}>
-  <div class="prose prose-lesson prose-neutral">
+  <div class="prose prose-lesson">
     <p>
       A practical, developer-focused introduction to reinforcement learning. This course builds intuition before formulas, with exercises, implementations, and interactive examples you can run locally.
     </p>
-
 
     {
       firstLesson && (
         <p>
           <a
             href={`/rl-course/${firstLesson}`}
-            class="inline-block rounded border border-neutral-300 px-4 py-2 font-sans text-sm text-neutral-800 transition-colors hover:bg-neutral-50"
+            class="not-prose inline-block rounded border border-[var(--color-border)] px-4 py-2 font-mono text-sm text-[var(--color-text)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
           >
             Start with Introduction →
           </a>
@@ -26,30 +25,28 @@ const firstLesson = getFirstLessonSlug();
       )
     }
 
-    <div class="mt-14 border-t border-neutral-200 pt-10">
-      <h2 class="mb-6 font-sans text-sm font-medium uppercase tracking-widest text-neutral-500">
-        Course outline
-      </h2>
+    <div class="not-prose mt-14 border-t border-[var(--color-border)] pt-10">
+      <h2 class="nav-section-label mb-6">Course outline</h2>
       {
         rlCourseNav.map((group) => (
           <div class="mb-8 last:mb-0">
-            <h3 class="mb-3 font-sans text-base font-medium text-neutral-900">{group.section}</h3>
-            <ul class="space-y-2">
+            <h3 class="mb-3 font-sans text-base font-medium text-[var(--color-text-bright)]">{group.section}</h3>
+            <ul class="space-y-1">
               {group.items.map((item) => (
                 <li>
                   <a
                     href={getNavItemHref(item.slug)}
-                    class="font-serif text-neutral-700 link-subtle"
+                    class="nav-link !text-[0.875rem] !text-[var(--color-prose)]"
                   >
                     {item.title}
                   </a>
                   {item.children && item.children.length > 0 && (
-                    <ul class="mt-2 space-y-1 pl-4">
+                    <ul class="nav-children">
                       {item.children.map((child) => (
                         <li>
                           <a
                             href={getNavItemHref(child.slug)}
-                            class="font-serif text-sm text-neutral-600 link-subtle"
+                            class="nav-link"
                           >
                             {child.title}
                           </a>
