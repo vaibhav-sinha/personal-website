@@ -1,3 +1,8 @@
+## Tailwind
+
+Use Tailwind v4 CSS variable shorthand for theme tokens: `text-(--color-muted)`, `border-(--color-border)`, `bg-(--color-surface)` — not the arbitrary-value form `text-[var(--color-muted)]`.
+Register custom properties in `:root` / `@theme` in `src/styles/global.css`; reference them with the parenthesis syntax in class names.
+
 ## Development
 
 When starting the dev server, use background mode:

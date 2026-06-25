@@ -11,10 +11,10 @@ const { title, items } = Astro.props;
 ---
 
 <section class="mb-8">
-  <h2 class="nav-section-label mb-3 border-b border-[var(--color-border)] pb-2">{title}</h2>
+  <h2 class="nav-section-label mb-3 border-b border-(--color-border) pb-2">{title}</h2>
   <ul>
     {items.map((item) => (
-      <li class="border-b border-[var(--color-border)] last:border-b-0">
+      <li class="border-b border-(--color-border) last:border-b-0">
         <LinkRow {...item} />
       </li>
     ))}

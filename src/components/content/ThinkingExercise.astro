@@ -7,20 +7,20 @@ interface Props {
 const { title = "Think about it", answer } = Astro.props;
 ---
 
-<aside class="not-prose my-8 border-l-2 border-[var(--color-accent-dim)] bg-[var(--color-surface)] px-5 py-4">
-  <p class="mb-2 font-mono text-xs uppercase tracking-widest text-[var(--color-muted)]">
+<aside class="not-prose my-8 border-l-2 border-(--color-accent-dim) bg-(--color-surface) px-5 py-4">
+  <p class="mb-2 font-mono text-xs uppercase tracking-widest text-(--color-muted)">
     {title}
   </p>
-  <div class="font-serif text-base leading-relaxed text-[var(--color-prose)]">
+  <div class="font-serif text-base leading-relaxed text-(--color-prose)">
     <slot />
   </div>
   {
     answer && (
       <details class="mt-4">
-        <summary class="cursor-pointer font-sans text-sm text-[var(--color-muted)] hover:text-[var(--color-text)]">
+        <summary class="cursor-pointer font-sans text-sm text-(--color-muted) hover:text-(--color-text)">
           Show a possible answer
         </summary>
-        <p class="mt-2 font-serif text-sm leading-relaxed text-[var(--color-prose)]">{answer}</p>
+        <p class="mt-2 font-serif text-sm leading-relaxed text-(--color-prose)">{answer}</p>
       </details>
     )
   }

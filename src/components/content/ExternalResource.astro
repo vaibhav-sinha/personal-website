@@ -21,14 +21,14 @@ const typeLabels: Record<NonNullable<Props["type"]>, string> = {
   href={href}
   target="_blank"
   rel="noopener noreferrer"
-  class="not-prose my-8 flex gap-4 rounded-md border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-3 transition-colors hover:border-[var(--color-muted)]"
+  class="not-prose my-8 flex gap-4 rounded-md border border-(--color-border) bg-(--color-surface) px-4 py-3 transition-colors hover:border-(--color-muted)"
 >
   <div class="min-w-0 flex-1">
-    <p class="font-mono text-xs uppercase tracking-widest text-[var(--color-muted)]">
+    <p class="font-mono text-xs uppercase tracking-widest text-(--color-muted)">
       {typeLabels[type]}
     </p>
-    <p class="mt-1 font-sans text-sm font-medium text-[var(--color-text)]">{title}</p>
-    <p class="mt-1 font-serif text-sm leading-relaxed text-[var(--color-muted)]">{description}</p>
+    <p class="mt-1 font-sans text-sm font-medium text-(--color-text)">{title}</p>
+    <p class="mt-1 font-serif text-sm leading-relaxed text-(--color-muted)">{description}</p>
   </div>
-  <span class="shrink-0 self-center font-mono text-[var(--color-muted)]" aria-hidden="true">↗</span>
+  <span class="shrink-0 self-center font-mono text-(--color-muted)" aria-hidden="true">↗</span>
 </a>

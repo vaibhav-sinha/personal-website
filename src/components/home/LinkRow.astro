@@ -15,12 +15,12 @@ const isExternal = href.startsWith("http");
   {...(isExternal ? { target: "_blank", rel: "noopener noreferrer" } : {})}
 >
   <div class="flex items-baseline justify-between gap-4">
-    <span class="font-medium text-[var(--color-text)] group-hover:text-[var(--color-accent)]">
+    <span class="font-medium text-(--color-text) group-hover:text-(--color-accent)">
       {title}
     </span>
     {isExternal && (
-      <span class="shrink-0 font-mono text-xs text-[var(--color-muted)]" aria-hidden="true">↗</span>
+      <span class="shrink-0 font-mono text-xs text-(--color-muted)" aria-hidden="true">↗</span>
     )}
   </div>
-  <p class="mt-0.5 text-[0.8125rem] leading-relaxed text-[var(--color-muted)]">{description}</p>
+  <p class="mt-0.5 text-[0.8125rem] leading-relaxed text-(--color-muted)">{description}</p>
 </a>

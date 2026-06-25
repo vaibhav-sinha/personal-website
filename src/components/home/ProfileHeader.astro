@@ -9,13 +9,13 @@ import { profile, socialLinks } from "../../data/site";
       alt={`${profile.name} profile photo`}
       width="56"
       height="56"
-      class="size-14 shrink-0 rounded-md border border-[var(--color-border)] bg-[var(--color-surface-raised)] object-cover"
+      class="size-14 shrink-0 rounded-md border border-(--color-border) bg-(--color-surface-raised) object-cover"
     />
     <div>
-      <h1 class="text-[1.375rem] font-semibold tracking-tight text-[var(--color-text-bright)]">
+      <h1 class="text-[1.375rem] font-semibold tracking-tight text-(--color-text-bright)">
         {profile.name}
       </h1>
-      <p class="mt-1 font-mono text-[0.8125rem] text-[var(--color-muted)]">{profile.tagline}</p>
+      <p class="mt-1 font-mono text-[0.8125rem] text-(--color-muted)">{profile.tagline}</p>
     </div>
   </div>
   <nav class="flex gap-5" aria-label="Social links">
@@ -23,7 +23,7 @@ import { profile, socialLinks } from "../../data/site";
       socialLinks.map((link) => (
         <a
           href={link.href}
-          class="font-mono text-[0.8125rem] text-[var(--color-muted)] link-subtle"
+          class="font-mono text-[0.8125rem] text-(--color-muted) link-subtle"
           target="_blank"
           rel="noopener noreferrer"
         >

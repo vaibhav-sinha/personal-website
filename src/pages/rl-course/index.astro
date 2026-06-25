@@ -17,7 +17,7 @@ const firstLesson = getFirstLessonSlug();
         <p>
           <a
             href={`/rl-course/${firstLesson}`}
-            class="not-prose inline-block rounded border border-[var(--color-border)] px-4 py-2 font-mono text-sm text-[var(--color-text)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+            class="not-prose inline-block rounded border border-(--color-border) px-4 py-2 font-mono text-sm text-(--color-text) transition-colors hover:border-(--color-accent) hover:text-(--color-accent)"
           >
             Start with Introduction →
           </a>
@@ -25,18 +25,18 @@ const firstLesson = getFirstLessonSlug();
       )
     }
 
-    <div class="not-prose mt-14 border-t border-[var(--color-border)] pt-10">
+    <div class="not-prose mt-14 border-t border-(--color-border) pt-10">
       <h2 class="nav-section-label mb-6">Course outline</h2>
       {
         rlCourseNav.map((group) => (
           <div class="mb-8 last:mb-0">
-            <h3 class="mb-3 font-sans text-base font-medium text-[var(--color-text-bright)]">{group.section}</h3>
+            <h3 class="mb-3 font-sans text-base font-medium text-(--color-text-bright)">{group.section}</h3>
             <ul class="space-y-1">
               {group.items.map((item) => (
                 <li>
                   <a
                     href={getNavItemHref(item.slug)}
-                    class="nav-link !text-[0.875rem] !text-[var(--color-prose)]"
+                    class="nav-link !text-[0.875rem] !text-(--color-prose)"
                   >
                     {item.title}
                   </a>
