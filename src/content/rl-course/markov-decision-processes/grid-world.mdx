@@ -1,0 +1,20 @@
+---
+title: Grid World Intuition
+description: Build intuition for MDPs on small grid environments before scaling to complex problems.
+section: Foundations
+order: 2.2
+---
+
+import ExternalResource from "../../../components/content/ExternalResource.astro";
+import Simulation from "../../../components/content/Simulation.tsx";
+
+Many RL algorithms are easier to understand on small grid worlds. The simulation below is a simplified environment: move the agent toward the goal and observe how step rewards accumulate.
+
+<Simulation client:visible />
+
+<ExternalResource
+  href="https://gymnasium.farama.org/"
+  title="Gymnasium"
+  description="A standard API for reinforcement learning environments in Python."
+  type="docs"
+/>

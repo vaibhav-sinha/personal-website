@@ -1,0 +1,52 @@
+---
+title: Introduction
+description: What reinforcement learning is, how it differs from supervised learning, and what this course covers.
+section: Foundations
+order: 1
+---
+
+import CodeBlock from "../../components/content/CodeBlock.astro";
+import ThinkingExercise from "../../components/content/ThinkingExercise.astro";
+import ExternalResource from "../../components/content/ExternalResource.astro";
+
+Reinforcement learning (RL) is about learning what to do — how to map situations to actions — so as to maximize a cumulative reward. Unlike supervised learning, an RL agent is not told which actions are correct. It must discover them through trial and error.
+
+## The basic loop
+
+At each timestep, an agent observes the state of its environment, takes an action, and receives a reward signal. The goal is to learn a policy that maximizes expected cumulative reward over time.
+
+<CodeBlock
+  lang="python"
+  title="agent_loop.py"
+  code={`
+def agent_loop(env, policy):
+    state = env.reset()
+    total_reward = 0
+
+    while not env.done:
+        action = policy(state)
+        state, reward, done = env.step(action)
+        total_reward += reward
+
+    return total_reward
+`}
+/>
+
+## What you will learn
+
+This course builds intuition before formulas. We start with Markov decision processes, move through value functions and policy optimization, and connect theory to code you can run.
+
+<ExternalResource
+  href="http://incompleteideas.net/book/the-book.html"
+  title="Reinforcement Learning: An Introduction"
+  description="Sutton & Barto — the standard reference for RL theory and algorithms."
+  type="book"
+/>
+
+<ThinkingExercise answer="In supervised learning, each example comes with a correct label. In RL, feedback is a scalar reward that may be delayed, sparse, or noisy — the agent must infer good behavior from consequences.">
+  Consider a robot learning to walk. Why is this closer to reinforcement learning than to supervised classification?
+</ThinkingExercise>
+
+## How to use this course
+
+Read each lesson in order. Run the code examples, try the thinking exercises before peeking at answers, and use the interactive simulations to build intuition. External resources are optional deep dives.

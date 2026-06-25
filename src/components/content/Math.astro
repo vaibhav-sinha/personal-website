@@ -1,0 +1,69 @@
+---
+import katex from "katex";
+import "katex/dist/katex.min.css";
+
+interface Props {
+  /** LaTeX source. Omit when using the default slot. */
+  latex?: string;
+  /** Centered block equation (display mode). */
+  display?: boolean;
+  /** Multiline derivation or proof; wraps content in `align*` when needed. */
+  proof?: boolean;
+}
+
+const { latex, display = false, proof = false } = Astro.props;
+
+let content = latex?.trim() ?? "";
+
+if (!content && Astro.slots.has("default")) {
+  const slotHtml = await Astro.slots.render("default");
+  content = slotHtml
+    .replace(/<br\s*\/?>/gi, "\\\\")
+    .replace(/<[^>]*>/g, "")
+    .trim();
+}
+
+if (!content) {
+  throw new Error("Math: provide a `latex` prop or default slot content.");
+}
+
+if (proof && !/\\begin\{/.test(content)) {
+  content = `\\begin{align*}${content}\\end{align*}`;
+}
+
+const html = katex.renderToString(content, {
+  displayMode: display || proof,
+  throwOnError: false,
+  strict: "warn",
+});
+
+const isBlock = display || proof;
+const Tag = isBlock ? "div" : "span";
+---
+
+<Tag
+  class:list={[
+    "not-prose",
+    isBlock && "math-display my-6",
+    proof && "math-proof",
+    !isBlock && "math-inline",
+  ]}
+  set:html={html}
+/>
+
+<style>
+  .math-display {
+    text-align: center;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .math-proof :global(.katex-display) {
+    margin: 0;
+    text-align: left;
+  }
+
+  .math-inline :global(.katex) {
+    font-size: 1em;
+  }
+</style>

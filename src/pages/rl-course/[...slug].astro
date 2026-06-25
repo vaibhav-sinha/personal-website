@@ -1,0 +1,29 @@
+---
+import { getCollection, render } from "astro:content";
+import CourseLayout from "../../layouts/CourseLayout.astro";
+import { getOrderedLessons, getPrevNext } from "../../lib/course";
+
+export async function getStaticPaths() {
+  const lessons = await getCollection("rl-course", ({ data }) => !data.draft);
+
+  return lessons.map((lesson) => ({
+    params: { slug: lesson.id },
+    props: { lesson },
+  }));
+}
+
+const { lesson } = Astro.props;
+const orderedLessons = await getOrderedLessons();
+const { prev, next } = getPrevNext(orderedLessons, lesson.id);
+const { Content } = await render(lesson);
+---
+
+<CourseLayout
+  title={lesson.data.title}
+  description={lesson.data.description}
+  currentSlug={lesson.id}
+  prev={prev}
+  next={next}
+>
+  <Content />
+</CourseLayout>

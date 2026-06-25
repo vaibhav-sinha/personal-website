@@ -1,0 +1,24 @@
+---
+title: The Markov Property
+description: Why the future depends only on the present state and action, not the full history.
+section: Foundations
+order: 2.1
+---
+
+import ThinkingExercise from "../../../components/content/ThinkingExercise.astro";
+import Math from "../../../components/content/Math.astro";
+
+The **Markov property** says the future depends only on the current state and action, not on the full history. Formally, for any history <Math latex="h_t = (s_0, a_0, r_1, s_1, \ldots, s_t)" />:
+
+<Math
+  display
+  latex="P(s_{t+1} \mid h_t, a_t) = P(s_{t+1} \mid s_t, a_t)"
+/>
+
+This assumption is what makes MDPs tractable. Without it, the agent would need to remember the entire trajectory to make good decisions.
+
+In practice, you often **engineer state representations** so the Markov property holds — for example, including velocity in a robot's state, not just position.
+
+<ThinkingExercise answer="With γ close to 1, distant rewards matter almost as much as immediate ones — the agent plans for the long term. With γ near 0, only immediate rewards dominate — the agent becomes myopic.">
+  If γ = 0.9, a reward of 1 received two steps from now is worth 0.81 in present terms. What behavior would you expect from an agent with γ = 0 versus γ = 0.99?
+</ThinkingExercise>

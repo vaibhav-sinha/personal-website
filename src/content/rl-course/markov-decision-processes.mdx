@@ -1,0 +1,68 @@
+---
+title: Markov Decision Processes
+description: Formalizing sequential decision-making with states, actions, transitions, and rewards.
+section: Foundations
+order: 2
+---
+
+import CodeBlock from "../../components/content/CodeBlock.astro";
+import Math from "../../components/content/Math.astro";
+
+A **Markov decision process** (MDP) is the standard mathematical framework for modeling sequential decision problems. An MDP is defined by a tuple \((S, A, P, R, \gamma)\):
+
+- **S** — set of states
+- **A** — set of actions
+- **P** — transition dynamics \(P(s' \mid s, a)\)
+- **R** — reward function \(R(s, a, s')\)
+- **γ** — discount factor in \([0, 1]\)
+
+See [The Markov Property](/rl-course/markov-decision-processes/the-markov-property) for why this tuple is enough to describe a sequential decision problem without tracking full history.
+
+## A minimal implementation
+
+<CodeBlock
+  lang="python"
+  title="mdp.py"
+  code={`
+from dataclasses import dataclass
+from typing import Hashable
+
+State = Hashable
+Action = Hashable
+
+@dataclass(frozen=True)
+class MDP:
+    states: set[State]
+    actions: set[Action]
+    transitions: dict[tuple[State, Action], list[tuple[State, float]]]
+    rewards: dict[tuple[State, Action, State], float]
+    gamma: float = 0.99
+
+    def step(self, state: State, action: Action) -> tuple[State, float]:
+        # Sample next state from transitions[state, action]
+        # Return (next_state, reward)
+        ...
+`}
+/>
+
+See [Grid World Intuition](/rl-course/markov-decision-processes/grid-world) for an interactive example of navigating a simple MDP.
+
+## Looking ahead
+
+With MDPs defined, the next step is to quantify how good it is to be in a state or to take an action — the value functions <Math latex="V(s)" /> and <Math latex="Q(s, a)" />.
+
+The state-value function under policy <Math latex="\pi" /> is the expected discounted return:
+
+<Math
+  display
+  latex="V^\pi(s) = \mathbb{E}_\pi \left[ \sum_{t=0}^{\infty} \gamma^t R_{t+1} \mid S_0 = s \right]"
+/>
+
+Expanding one step gives the Bellman expectation equation:
+
+<Math
+  proof
+  latex={`V^\\pi(s) &= \\mathbb{E}_\\pi \\left[ G_0 \\mid S_0 = s \\right] \\\\
+&= \\mathbb{E}_\\pi \\left[ R_1 + \\gamma G_1 \\mid S_0 = s \\right] \\\\
+&= \\sum_{a \\in A} \\pi(a \\mid s) \\sum_{s' \\in S} P(s' \\mid s, a) \\left[ R(s, a, s') + \\gamma V^\\pi(s') \\right]`}
+/>

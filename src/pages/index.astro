@@ -1,17 +1,15 @@
 ---
-
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ProfileHeader from "../components/home/ProfileHeader.astro";
+import SectionBlock from "../components/home/SectionBlock.astro";
+import { profile, openSource, products, resources } from "../data/site";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout title={profile.name} description={profile.tagline}>
+  <main class="mx-auto max-w-xl px-6 py-16">
+    <ProfileHeader />
+    <SectionBlock title="Open Source" items={openSource} />
+    <SectionBlock title="Products" items={products} />
+    <SectionBlock title="Resources" items={resources} />
+  </main>
+</BaseLayout>

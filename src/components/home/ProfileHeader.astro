@@ -1,0 +1,29 @@
+---
+import { profile, socialLinks } from "../../data/site";
+---
+
+<header class="mb-16 text-center">
+  <img
+    src={profile.photo}
+    alt={`${profile.name} profile photo`}
+    width="96"
+    height="96"
+    class="mx-auto mb-6 size-24 rounded-full border border-neutral-200 bg-neutral-100 object-cover"
+  />
+  <h1 class="text-2xl font-semibold tracking-tight text-neutral-900">{profile.name}</h1>
+  <p class="mt-2 text-neutral-600">{profile.tagline}</p>
+  <nav class="mt-5 flex justify-center gap-5" aria-label="Social links">
+    {
+      socialLinks.map((link) => (
+        <a
+          href={link.href}
+          class="text-sm text-neutral-600 link-subtle"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {link.label}
+        </a>
+      ))
+    }
+  </nav>
+</header>

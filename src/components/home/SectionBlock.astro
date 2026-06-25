@@ -1,0 +1,22 @@
+---
+import type { LinkItem } from "../../data/site";
+import LinkRow from "./LinkRow.astro";
+
+interface Props {
+  title: string;
+  items: LinkItem[];
+}
+
+const { title, items } = Astro.props;
+---
+
+<section class="mb-14">
+  <h2 class="mb-5 text-xs font-medium uppercase tracking-widest text-neutral-500">{title}</h2>
+  <ul class="divide-y divide-neutral-200 border-y border-neutral-200">
+    {items.map((item) => (
+      <li>
+        <LinkRow {...item} />
+      </li>
+    ))}
+  </ul>
+</section>

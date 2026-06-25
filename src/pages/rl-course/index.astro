@@ -1,0 +1,68 @@
+---
+import CourseLayout from "../../layouts/CourseLayout.astro";
+import { courseMeta, getNavItemHref, rlCourseNav } from "../../data/rl-course-nav";
+import { getFirstLessonSlug } from "../../lib/course";
+
+const firstLesson = getFirstLessonSlug();
+---
+
+<CourseLayout title={courseMeta.title} description={courseMeta.description}>
+  <div class="prose prose-lesson prose-neutral">
+    <p>
+      A practical, developer-focused introduction to reinforcement learning. This course builds intuition before formulas, with exercises, implementations, and interactive examples you can run locally.
+    </p>
+
+
+    {
+      firstLesson && (
+        <p>
+          <a
+            href={`/rl-course/${firstLesson}`}
+            class="inline-block rounded border border-neutral-300 px-4 py-2 font-sans text-sm text-neutral-800 transition-colors hover:bg-neutral-50"
+          >
+            Start with Introduction →
+          </a>
+        </p>
+      )
+    }
+
+    <div class="mt-14 border-t border-neutral-200 pt-10">
+      <h2 class="mb-6 font-sans text-sm font-medium uppercase tracking-widest text-neutral-500">
+        Course outline
+      </h2>
+      {
+        rlCourseNav.map((group) => (
+          <div class="mb-8 last:mb-0">
+            <h3 class="mb-3 font-sans text-base font-medium text-neutral-900">{group.section}</h3>
+            <ul class="space-y-2">
+              {group.items.map((item) => (
+                <li>
+                  <a
+                    href={getNavItemHref(item.slug)}
+                    class="font-serif text-neutral-700 link-subtle"
+                  >
+                    {item.title}
+                  </a>
+                  {item.children && item.children.length > 0 && (
+                    <ul class="mt-2 space-y-1 pl-4">
+                      {item.children.map((child) => (
+                        <li>
+                          <a
+                            href={getNavItemHref(child.slug)}
+                            class="font-serif text-sm text-neutral-600 link-subtle"
+                          >
+                            {child.title}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</CourseLayout>
