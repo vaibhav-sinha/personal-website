@@ -8,8 +8,11 @@ order: 1
 import BookReading from "../../components/content/BookReading.astro";
 import CodeBlock from "../../components/content/CodeBlock.astro";
 import Question from "../../components/content/Question.astro";
+import Math from "../../components/content/Math.astro";
+import QuestionAnswer from "../../components/content/QuestionAnswer.astro";
 import RLProblem from "../../components/content/RLProblem.astro";
 import ThinkingExercise from "../../components/content/ThinkingExercise.astro";
+import EnvironmentExerciseAnswer from "../../components/content/rl-course/EnvironmentExerciseAnswer.astro";
 import { carGameProblem } from "../../data/rl-course/car-game-problem";
 import { carGamePrompt, carGameThinkingExerciseApi, carGameThinkingExerciseImages } from "../../data/rl-course/car-game-prompts";
 import { policyPrompt, policyThinkingExercisePrompt } from "../../data/rl-course/policy-prompts";
@@ -42,33 +45,266 @@ States and actions are quite fundamental to RL. Let's take an example to think d
 
 Now, based on your choice of properties, answer the following questions:
 
-<div class="not-prose my-4 space-y-4">
-  <Question prompt={carGamePrompt("Did you include position of the car and the obstacles in your state?")}>
+<div class="my-4 space-y-4">
+  <Question>
     Did you include position of the car and the obstacles in your state?
   </Question>
 
-  <Question prompt={carGamePrompt("Did you treat the position as a continuous variable or a discrete one?")}>
+  <Question>
     Did you treat the position as a continuous variable or a discrete one?
   </Question>
 
   <Question prompt={carGamePrompt("If position is assumed to be continuous, would that mean that the number of states are infinite?")}>
     If position is assumed to be continuous, would that mean that the number of states are infinite?
+
+    <QuestionAnswer slot="answer">
+
+Yes. If you model position (and possibly velocity, steering angle, etc.) as truly continuous variables, then the state space is effectively infinite (more precisely, uncountably infinite).
+
+For example, suppose you define the state as:
+
+* Car position: (x, y)
+* Car velocity: v
+* Positions of all obstacles: <Math latex="(x_1, y_1), (x_2, y_2), \ldots" />
+
+If each coordinate can take any real value, then there are infinitely many possible states.
+
+### What would a useful state representation contain?
+
+For a driving game, a state should contain all information needed to predict future evolution given an action. Depending on the engine, that might include:
+
+**Ego vehicle**
+
+* Lateral position on the road
+* Forward position (or distance traveled)
+* Speed
+* Acceleration
+* Heading/orientation
+* Lane index (if lanes exist)
+
+**Environment**
+
+* Positions of nearby obstacles
+* Velocities of obstacles (if they move)
+* Road curvature
+* Road width/lane boundaries
+
+**Game status**
+
+* Time remaining
+* Score
+* Damage/health
+* Whether the game is over
+
+In reinforcement learning terms, this would ideally be a **Markov state**: everything needed to determine the distribution of the next state.
+
+### Does infinite state space cause problems?
+
+Not necessarily. Many control problems have continuous state spaces:
+
+* Car driving
+* Robot control
+* Aircraft navigation
+
+Classical tabular methods (e.g., storing one value per state) become impossible because you cannot enumerate all states.
+
+Typical solutions are:
+
+1. **Discretization**
+
+   * Position → bins
+   * Speed → bins
+   * Example:
+
+     * Lane = `{left, center, right}`
+     * Speed = `{slow, medium, fast}`
+   * Produces a finite state space.
+
+2. **Function approximation**
+
+   * Neural networks
+   * Linear approximators
+   * Decision trees
+   * Used by modern RL algorithms (DQN, PPO, SAC, etc.)
+
+### Example
+
+If the road has 3 lanes and you simplify the state to:
+
+* Current lane: 3 possibilities
+* Speed level: 5 possibilities
+* Distance to nearest obstacle in current lane: 10 bins
+
+Then the state space size is:
+
+<Math display latex="3 \times 5 \times 10 = 150" />
+
+finite and manageable.
+
+If instead you store exact position and speed as real numbers, the state space becomes infinite.
+
+One subtle point: even when the theoretical state space is infinite, a digital game engine actually stores values with finite precision (e.g., 32-bit floats). Therefore, the number of distinct states in the computer is technically finite, though usually astronomically large.
+
+    </QuestionAnswer>
   </Question>
 
   <Question prompt={carGamePrompt("Based on your reading of the first chapter, do you think RL can deal with infinite number of states or not?")}>
     Based on your reading of the first chapter, do you think RL can deal with infinite number of states or not?
+
+    <QuestionAnswer slot="answer">
+
+Yes, RL can deal with infinite (or extremely large) state spaces, but not always with simple tabular methods.
+
+The key idea is that an agent learns from interaction with an environment. It does not restrict RL to finite state spaces.
+
+* **Tabular RL** (storing a value for every state) requires a finite and manageable number of states.
+* **Function approximation** (neural networks, linear models, etc.) allows RL to generalize across states and handle:
+
+  * Continuous positions
+  * Continuous speeds
+  * Infinite or effectively infinite state spaces
+
+For example, if car position and speed are real numbers, there are infinitely many possible states. Modern RL methods can still learn by approximating the value function or policy rather than storing information for every state individually.
+
+    </QuestionAnswer>
   </Question>
 
   <Question prompt={carGamePrompt("Did you include the velocity of the car in the state? If yes, why is it needed? If not, why not?")}>
     Did you include the velocity of the car in the state? If yes, why is it needed? If not, why not?
+
+    <QuestionAnswer slot="answer">
+
+A good state representation should contain all the information needed to predict what will happen next after taking an action. In reinforcement learning and control theory, this is called the **Markov property**: the current state should be sufficient, without needing the entire history.
+
+For a simple driving game, a useful state might include:
+
+* Car position (e.g., lane or x-coordinate)
+* Car velocity (speed)
+* Distance to the nearest obstacle(s)
+* Position/lane of the nearest obstacle(s)
+* Velocity of obstacle(s), if they move
+* Road boundaries or lane information
+* Any other game variables that affect future dynamics (e.g., remaining fuel, if applicable)
+
+### Should velocity be included?
+
+**Yes, velocity should generally be included.**
+
+The reason is that the car's future behavior depends not only on where it is, but also on how fast it is moving.
+
+For example:
+
+* Imagine the car is 20 meters from an obstacle.
+* In one case, the car is moving at **10 km/h**.
+* In another case, it is moving at **100 km/h**.
+
+The position is identical, but the optimal action is different:
+
+* At 10 km/h, you may safely continue accelerating.
+* At 100 km/h, you probably need to brake or steer immediately.
+
+If velocity is omitted, these two situations would appear to be the same state, even though their futures are very different. The agent would not have enough information to choose the best action.
+
+Another way to see this is through the game physics:
+
+* The next position is computed as something like
+
+<Math display latex="\text{position}_{t+1} = \text{position}_t + \text{velocity}_t \times \Delta t" />
+
+* Therefore, knowing only the current position is insufficient to predict the next state.
+
+### When could velocity be omitted?
+
+Velocity could be left out only if it is **fully determined by other state variables**. For example:
+
+* The game has only one fixed speed.
+* Or the speed is always recoverable from other information (e.g., it never changes, or the previous action uniquely determines it).
+
+In such cases, velocity adds no new information.
+
+    </QuestionAnswer>
   </Question>
 
   <Question prompt={carGamePrompt("Did you include past position or velocity of the car in the state? Is it relevant to include those in the current state to make a decision about what action to take at the current time?")}>
     Did you include past position or velocity of the car in the state? Is it relevant to include those in the current state to make a decision about what action to take at the current time?
+
+    <QuestionAnswer slot="answer">
+
+This question is really about choosing a **state representation** that is sufficient for making optimal decisions. The key idea comes from the **Markov property**: the state should contain all the information needed to predict future outcomes given the current action.
+
+For a simple driving game, a reasonable state might include:
+
+* Current position of the car (lane or x-coordinate)
+* Current speed (velocity)
+* Current heading (if steering is continuous)
+* Positions of nearby obstacles
+* Velocities of nearby obstacles (if they move)
+* Distance to the next obstacle
+* Road geometry ahead (curves, lane boundaries, etc., if applicable)
+* Current acceleration (if the dynamics depend on it)
+
+### Should past position be included?
+
+Usually, **no**.
+
+If the current position and current velocity are already known, the previous position does not provide any additional information. The previous position was only useful for *computing* velocity:
+
+<Math display latex="v \approx \frac{x_t - x_{t-1}}{\Delta t}" />
+
+Once velocity is explicitly part of the state, the old position becomes redundant.
+
+### Should current velocity be included?
+
+**Yes**, in almost all driving problems.
+
+Imagine two situations:
+
+* Car A is at position (x=100) moving at 20 m/s.
+* Car B is at the same position (x=100) but stopped.
+
+The best action is likely different. Car A may need to brake immediately to avoid a collision, while Car B may safely accelerate.
+
+The current position alone is therefore **not sufficient**.
+
+### Should past velocity be included?
+
+Usually, **no**.
+
+If the vehicle dynamics are Markovian (which they usually are), the next state depends on:
+
+* current position,
+* current velocity,
+* current action.
+
+The previous velocity does not add new information because it only tells you how the current velocity changed.
+
+The exception is when acceleration or other hidden dynamics matter. For example, if the car has momentum effects or actuator delays and acceleration is **not** explicitly represented, then knowing the previous velocity could help estimate acceleration.
+
+### General principle
+
+A good state representation contains the **minimum information necessary to predict the future**.
+
+For a simple car game:
+
+* ✔ Current position
+* ✔ Current velocity
+* ✔ Current positions (and possibly velocities) of obstacles
+* ✔ Road information
+
+Typically **not needed**:
+
+* ✘ Previous position
+* ✘ Previous velocity
+
+unless the environment is only partially observable or the physics depend on quantities (such as acceleration) that are not otherwise included.
+
+So, in a standard reinforcement learning formulation of this game, you would include **current velocity** but **not past position or past velocity**, because the current state already contains the information needed to choose the next action.
+
+    </QuestionAnswer>
   </Question>
 </div>
 
-Let's make a small modification now.
+Let's make a modification now.
 
 <ThinkingExercise>
   If the game engine could only provide you images of the game, what information would you use to define the state of the game at any moment?
@@ -76,21 +312,224 @@ Let's make a small modification now.
 
 Based on your choice, answer the following questions:
 
-<div class="not-prose my-4 space-y-4">
-  <Question prompt={carGamePrompt("Now what would you include in the state?", carGameThinkingExerciseImages)}>
-    Now what would you include in the state?
-  </Question>
-
+<div class="my-4 space-y-4">
   <Question prompt={carGamePrompt("Is it required to include the images of the past in the current state representation? Why or why not?", carGameThinkingExerciseImages)}>
     Is it required to include the images of the past in the current state representation? Why or why not?
+
+    <QuestionAnswer slot="answer">
+
+If the only input is the game image, the state should contain the information necessary to choose the best action. Rather than storing the raw pixels alone, you would want features that summarize the important aspects of the scene.
+
+A good state representation would include:
+
+* **Car information**
+
+  * Current position in the lane (left, center, right, or continuous x-coordinate)
+  * Current speed (can be inferred from motion across consecutive frames)
+  * Heading/orientation (if the car can rotate)
+
+* **Road information**
+
+  * Lane boundaries
+  * Road curvature
+  * Available drivable area
+
+* **Obstacle information**
+
+  * Positions of nearby obstacles
+  * Distance to each obstacle
+  * Relative speed of obstacles (requires multiple frames)
+  * Size and lane occupied by each obstacle
+
+* **Dynamic information**
+
+  * Velocity of the player's car
+  * Velocity and direction of moving obstacles
+  * Time-to-collision estimates
+
+* **Game context**
+
+  * Remaining road ahead (visible portion)
+  * Score or elapsed time (if relevant)
+  * Any power-ups or special objects
+
+### Why multiple images are useful
+
+A single image does not contain velocity information. For example, from one frame you cannot determine:
+
+* Whether your car is accelerating or braking.
+* Whether an obstacle is moving toward you or is stationary.
+
+Therefore, reinforcement learning agents often define the state as a **stack of the last few frames** (e.g., the last 4 images). From these consecutive frames, the agent can infer:
+
+* Speed
+* Direction of motion
+* Relative movement of obstacles
+
+### State example
+
+A compact state could look like:
+
+<CodeBlock
+  lang="text"
+  code={`State = {
+    car_x,
+    car_speed,
+    road_curvature,
+    [
+        {obstacle_x, obstacle_distance, obstacle_relative_speed},
+        ...
+    ]
+}`}
+/>
+
+If using **raw images** (as in many deep reinforcement learning approaches such as Deep Q-Networks), the state is instead represented as:
+
+<CodeBlock
+  lang="text"
+  code={`State = [Frame(t-3), Frame(t-2), Frame(t-1), Frame(t)]`}
+/>
+
+The neural network then learns these features (car position, obstacle locations, speeds, etc.) directly from the pixel data without requiring manual feature engineering.
+
+    </QuestionAnswer>
   </Question>
 
   <Question prompt={carGamePrompt("For the car game, ignoring the state representation, do you think where the car will be in the future depends on only the present state of the car or also on the past?", carGameThinkingExerciseImages)}>
     For the car game, ignoring the state representation, do you think where the car will be in the future depends on only the present state of the car or also on the past?
+
+    <QuestionAnswer slot="answer">
+
+Ignoring how the state is represented, **the future position of the car should depend only on the present state, not on the past**, provided the present state is complete. This is known as the **Markov property**.
+
+    </QuestionAnswer>
   </Question>
 
   <Question prompt={carGamePrompt("In the first state representation we did not need to include the past while in the second we do. The game environment and the problem statement is the same. Is there a contradiction here?", [carGameThinkingExerciseApi, carGameThinkingExerciseImages])}>
     In the first state representation we did not need to include the past while in the second we do. The game environment and the problem statement is the same. Is there a contradiction here?
+
+    <QuestionAnswer slot="answer">
+
+There is no contradiction. The key idea is that the **state** depends on what the agent can observe, not just on the underlying environment.
+
+This is exactly the distinction between a **Markov state** and an **observation** in reinforcement learning.
+
+### Exercise 1: Access to the game engine API
+
+Suppose the API gives you information such as:
+
+* Car position <Math latex="(x, y)" />
+* Car velocity
+* Car acceleration
+* Lane number
+* Positions of all obstacles
+* Velocities of all obstacles
+* Road boundaries
+* Remaining fuel (if applicable)
+
+Then the state at time <Math latex="t" /> might be
+
+<Math display latex="s_t = \{\text{car position},\ \text{car velocity},\ \text{obstacle positions},\ \text{obstacle velocities},\ldots\}" />
+
+This state is **Markov**, meaning
+
+<Math display latex="P(s_{t+1}\mid s_t,a_t) = P(s_{t+1}\mid s_1,a_1,\ldots,s_t,a_t)" />
+
+The future depends only on the current state and action—not on the entire history.
+
+Notice that **velocity** is already included, so there is no need to remember previous states.
+
+---
+
+### Exercise 2: Only images are available
+
+Suppose the observation is a single screenshot.
+
+From one image you can determine
+
+* Car location
+* Obstacle locations
+* Road shape
+
+But you **cannot determine**
+
+* Car velocity
+* Obstacle velocities
+* Whether obstacles are moving toward or away from you
+
+For example:
+
+At time <Math latex="t" />:
+
+<CodeBlock
+  lang="text"
+  code={`Frame:
+      X
+     Car`}
+/>
+
+From this single frame, you cannot tell whether
+
+* the obstacle is stationary,
+* moving left,
+* moving right,
+* or whether your own car is moving fast or slowly.
+
+Two completely different physical states can produce exactly the same image.
+
+Therefore a single image is **not** a Markov state.
+
+To recover the missing information, you often stack several recent frames:
+
+<Math display latex="(o_{t-3}, o_{t-2}, o_{t-1}, o_t)" />
+
+where <Math latex="o_t" /> is the image at time <Math latex="t" />.
+
+Now you can estimate
+
+* direction of motion,
+* speed,
+* relative velocity,
+* acceleration (approximately).
+
+This history acts as a substitute for the hidden variables.
+
+---
+
+### Is the environment different?
+
+No.
+
+The environment has exactly the same true state in both cases.
+
+What changes is **what the agent observes**.
+
+There are two perspectives:
+
+* **Underlying environment state:** the complete physical configuration (positions, velocities, etc.). This is Markov.
+* **Agent observation:** what the agent actually receives (API values or images).
+
+With the API, the observation essentially equals the full state, so the problem is a **fully observable Markov decision process (MDP)**.
+
+With only images, the observation is incomplete, so the problem becomes a **partially observable Markov decision process (POMDP)**. The agent may need a history of observations (or an internal memory, such as an RNN hidden state) to infer the hidden state.
+
+---
+
+### The apparent contradiction
+
+The confusion comes from treating "image" as "state."
+
+A single image is **not** the state—it is only an **observation** of the state.
+
+So:
+
+* **True state:** same in both exercises; no history needed because it is Markov.
+* **Observation via API:** rich enough to reconstruct the state directly.
+* **Observation via image:** incomplete, so history is needed to approximate the hidden state.
+
+Thus there is no contradiction. The need for past observations arises because the observation is not Markov, even though the underlying environment state is.
+
+    </QuestionAnswer>
   </Question>
 </div>
 
@@ -105,29 +544,298 @@ The policy is essentially a mapping from states to actions. It tells what action
 
 Answer the following questions about policies:
 
-<div class="not-prose my-4 space-y-4">
+<div class="my-4 space-y-4">
   <Question prompt={policyPrompt("The book says that policies may be stochastic. What does that mean?")}>
     The book says that policies may be stochastic. What does that mean?
+
+    <QuestionAnswer slot="answer">
+
+A **deterministic policy** always chooses the same action for a given state.
+
+For example, if the agent is in state <Math latex="s" />, a deterministic policy might say:
+
+<Math display latex="\pi(s) = \text{Move Right}" />
+
+No matter how many times the agent reaches state <Math latex="s" />, it will always move right.
+
+A **stochastic policy**, on the other hand, specifies a **probability distribution over actions** rather than a single action. Instead of saying "always do this," it says "choose among these actions with certain probabilities."
+
+For example, suppose the available actions are **Left**, **Right**, and **Stay**. A stochastic policy might be:
+
+| State | Left | Right | Stay |
+| ----- | ---- | ----- | ---- |
+| <Math latex="s" /> | 0.2 | 0.7 | 0.1 |
+
+This means that whenever the agent is in state <Math latex="s" />:
+
+* It moves **Left** with probability **20%**.
+* It moves **Right** with probability **70%**.
+* It **Stays** with probability **10%**.
+
+The action is sampled randomly according to these probabilities.
+
+Mathematically, a stochastic policy is written as:
+
+<Math display latex="\pi(a \mid s) = P(A = a \mid S = s)" />
+
+which means:
+
+> "The probability of taking action <Math latex="a" /> when the agent is in state <Math latex="s" />."
+
+### Why use stochastic policies?
+
+Stochastic policies are useful because they can:
+
+* **Encourage exploration** in reinforcement learning by trying different actions.
+* **Handle uncertainty** when multiple actions are similarly good.
+* **Prevent predictability**, which is useful in competitive settings (e.g., games like rock-paper-scissors or poker).
+
+### Example
+
+Imagine a robot at an intersection.
+
+* **Deterministic policy:** "Whenever you're here, always go north."
+* **Stochastic policy:** "Go north with probability 0.8 and east with probability 0.2."
+
+Each time the robot reaches the intersection, it randomly chooses an action according to those probabilities.
+
+So when the book says **"policies may be stochastic,"** it means that the policy maps each state to a **probability distribution over possible actions**, rather than to a single fixed action.
+
+    </QuestionAnswer>
   </Question>
 
   <Question prompt={policyPrompt("Why would you want to have stochastic policies?")}>
     Why would you want to have stochastic policies?
+
+    <QuestionAnswer slot="answer">
+
+A **stochastic policy** maps each state to a **probability distribution over actions**, rather than always choosing the same action. There are several reasons why this is useful:
+
+1. **Exploration during learning**
+
+   * If the agent always picks the action that currently looks best (a deterministic policy), it may never discover better actions.
+   * A stochastic policy allows occasional selection of other actions, helping the agent learn more about the environment.
+
+2. **Handling uncertainty**
+
+   * In environments where the agent cannot fully observe the true state (such as partially observable environments), randomness can improve long-term performance.
+   * The same observation may correspond to different hidden situations, so always taking the same action may not be optimal.
+
+3. **Multiple equally good actions**
+
+   * Sometimes several actions have the same expected reward.
+   * A stochastic policy can assign probabilities to these actions instead of arbitrarily choosing one.
+
+4. **Preventing predictability**
+
+   * In competitive settings (e.g., games like poker or rock-paper-scissors), being deterministic makes the agent easy to exploit.
+   * Randomizing actions prevents opponents from learning a predictable pattern.
+
+5. **Optimization and learning algorithms**
+
+   * Many reinforcement learning algorithms, such as policy gradient methods, naturally represent policies as probability distributions.
+   * This makes the policy differentiable and easier to optimize using gradient-based methods.
+
+### Example
+
+Suppose an agent reaches a junction:
+
+* **Deterministic policy:**
+
+  * State S → Always go Left.
+
+* **Stochastic policy:**
+
+  * State S → Go Left with probability 0.8, Right with probability 0.2.
+
+Initially, the agent might choose Right occasionally to see if it leads to a better reward. If it turns out to be better, the probabilities can gradually shift toward Right.
+
+### When are deterministic policies sufficient?
+
+If the environment is **fully observable**, **stationary**, and there is a **single optimal action** for every state, then an optimal deterministic policy often exists. However, during learning—or in uncertain, partially observable, or adversarial environments—stochastic policies are often preferable and can even be necessary for optimal performance.
+
+    </QuestionAnswer>
   </Question>
 
   <Question prompt={policyPrompt("Is it ever a good idea to have stochastic policies if the environment is not stochastic?")}>
     Is it ever a good idea to have stochastic policies if the environment is not stochastic?
+
+    <QuestionAnswer slot="answer">
+
+Yes. Even in a completely deterministic environment, a stochastic policy can be useful.
+
+The key reason is that the environment is not the only thing that matters. The agent may face situations where randomness provides strategic advantages.
+
+Some examples:
+
+### 1. Multi-agent settings (game theory)
+
+Suppose you're playing rock-paper-scissors. The environment itself is deterministic: if both players choose actions, the outcome is fixed.
+
+However, a deterministic policy is exploitable. If your opponent can predict that you'll always play Rock in a certain state, they can always play Paper.
+
+The optimal policy is stochastic:
+
+* Rock: 1/3
+* Paper: 1/3
+* Scissors: 1/3
+
+Randomization prevents exploitation.
+
+---
+
+### 2. Exploration during learning
+
+Even if the environment is deterministic, the agent may not know the environment initially.
+
+Consider a maze:
+
+* Going left eventually yields reward 10.
+* Going right eventually yields reward 100.
+
+If the agent always follows a deterministic policy based on its current knowledge, it might never discover the better path.
+
+Methods such as:
+
+* ε-greedy policies
+* Softmax/Boltzmann policies
+
+introduce randomness so the agent explores alternative actions.
+
+Once learning is complete, the final optimal policy may become deterministic.
+
+---
+
+### 3. Partial observability
+
+Sometimes different underlying states look identical to the agent.
+
+For example, two hidden situations produce the same observation, but require different actions for best performance.
+
+A stochastic policy can effectively "hedge its bets" by choosing different actions with certain probabilities.
+
+In fact, for some partially observable problems, the optimal policy is genuinely stochastic.
+
+---
+
+### 4. Multiple equally good actions
+
+Suppose in a state:
+
+* Action A gives reward 10.
+* Action B gives reward 10.
+
+A deterministic policy could choose either one.
+
+A stochastic policy could choose A with probability 0.5 and B with probability 0.5, achieving exactly the same expected return.
+
+Here randomness doesn't improve performance, but it is still an optimal policy.
+
+---
+
+### In standard MDPs
+
+For a fully observable, single-agent, finite Markov Decision Process with deterministic transitions and rewards, there always exists an optimal **deterministic** policy.
+
+So if:
+
+* the environment is deterministic,
+* the state is fully observable,
+* there is only one agent,
+
+then randomness is usually unnecessary for optimal control itself.
+
+However, stochastic policies remain useful for:
+
+* exploration during learning,
+* handling partial observability,
+* avoiding exploitation by other agents,
+* representing ties among equally good actions.
+
+So the short answer is: **yes, stochastic policies can be valuable even in deterministic environments, but in a standard fully observable single-agent MDP, an optimal deterministic policy is sufficient.**
+
+    </QuestionAnswer>
   </Question>
 
-  <Question prompt={policyPrompt("Is it ever a good idea to have stochastic policies if the environment is not stochastic and also stationary?")}>
-    Is it ever a good idea to have stochastic policies if the environment is not stochastic and also stationary?
-  </Question>
+  <Question prompt={policyPrompt("For an arbitrary problem, let's say you are in a particular state. What factors would you consider to determine what action you should take next?")}>
+    For an arbitrary problem, let's say you are in a particular state. What factors would you consider to determine what action you should take next?
 
-  <Question prompt={policyPrompt("Let's say you are in state S at time t. What factors would you consider to determine what action A you should take next?")}>
-    Let's say you are in state `S` at time `t`. What factors would you consider to determine what action `A` you should take next?
+    <QuestionAnswer slot="answer">
+
+In reinforcement learning, a **policy** maps a state to an action. But deciding *which* action the policy should choose depends on several factors.
+
+If you are in a particular state, you would typically consider:
+
+1. **Current state information**
+
+   * What is the situation right now?
+   * What information about the environment is available?
+   * Example: In a chess game, the current board configuration is the state.
+
+2. **Goal or objective**
+
+   * What are you trying to achieve?
+   * Usually, the objective is to maximize the expected cumulative reward over time, not just the immediate reward.
+
+3. **Possible actions**
+
+   * What actions are available from the current state?
+   * Some actions may not be valid in certain states.
+
+4. **Expected consequences of each action**
+
+   * What state is each action likely to lead to?
+   * What rewards or penalties are associated with those future states?
+
+5. **Future rewards (long-term value)**
+
+   * An action with a small immediate reward may lead to much larger future rewards.
+   * This is why RL often prefers actions that maximize expected cumulative reward rather than immediate gain.
+
+6. **Uncertainty in the environment**
+
+   * If the environment is stochastic, the same action may lead to different outcomes with different probabilities.
+   * The policy should consider these probabilities.
+
+7. **Exploration vs. exploitation (during learning)**
+
+   * Should the agent choose the action it currently believes is best (exploit)?
+   * Or should it try a different action to gather more information (explore)?
+
+### Example: Robot Navigation
+
+Suppose a robot is in a room and wants to reach a charging station.
+
+**State:**
+
+* Robot's location
+* Battery level
+* Positions of obstacles
+
+**Possible actions:**
+
+* Move north
+* Move south
+* Move east
+* Move west
+
+The robot would consider:
+
+* Which moves are possible?
+* Which move gets it closer to the charger?
+* Is there an obstacle?
+* Will a longer but safer path be better?
+* Does the battery have enough charge for a detour?
+
+The policy ultimately chooses the action with the highest expected long-term benefit.
+
+    </QuestionAnswer>
   </Question>
 </div>
 
 
-<ThinkingExercise prompt={policyThinkingExercisePrompt("An environment was never formally defined. Based on the questions above and after discussing them with AI, can you now explain what is an environment and what does it mean for an environment to be stochastic or stationary?")}>
+<ThinkingExercise prompt={"Explain what is an environment and what does it mean for an environment to be stochastic or stationary in the context of RL?"}>
   An environment was never formally defined. Based on the questions above and after discussing them with AI, can you now explain what is an environment and what does it mean for an environment to be stochastic or stationary?
+
+  <EnvironmentExerciseAnswer slot="answer" />
 </ThinkingExercise>

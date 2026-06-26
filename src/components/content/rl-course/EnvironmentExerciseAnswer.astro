@@ -1,0 +1,68 @@
+---
+
+---
+
+<p>
+  An <strong>environment</strong> is everything outside the agent that the agent interacts with. The environment receives the agent's actions and responds by:
+</p>
+
+<ul>
+  <li>changing to a new state,</li>
+  <li>providing a reward, and</li>
+  <li>presenting the next state to the agent.</li>
+</ul>
+
+<p>For example:</p>
+
+<ul>
+  <li>In a chess game, the chessboard and opponent together form the environment.</li>
+  <li>In a self-driving car, the roads, traffic, pedestrians, and weather are part of the environment.</li>
+  <li>In a robot vacuum, the room, furniture, walls, and dirt make up the environment.</li>
+</ul>
+
+<hr />
+
+<h3>What does it mean for an environment to be stochastic?</h3>
+
+<p>
+  A <strong>stochastic environment</strong> contains randomness.
+</p>
+
+<p>The same action taken in the same state may produce different outcomes.</p>
+
+<p>Example:</p>
+
+<p>A delivery robot tries to move forward.</p>
+
+<ul>
+  <li>90% of the time it moves forward.</li>
+  <li>10% of the time it slips and stays where it is.</li>
+</ul>
+
+<p>The robot cannot predict the exact outcome every time.</p>
+
+<hr />
+
+<h3>What does it mean for an environment to be stationary?</h3>
+
+<p>
+  A <strong>stationary environment</strong> has rules that do not change over time.
+</p>
+
+<p>
+  If the agent performs the same action in the same state today or tomorrow, the probabilities and rewards remain the same.
+</p>
+
+<p>Example:</p>
+
+<p>A maze where the walls and rewards never change is stationary.</p>
+
+<p>A non-stationary environment changes over time.</p>
+
+<p>Example:</p>
+
+<ul>
+  <li>Traffic patterns change throughout the day.</li>
+  <li>A stock market changes continuously.</li>
+  <li>A game where opponents improve their strategies over time.</li>
+</ul>
