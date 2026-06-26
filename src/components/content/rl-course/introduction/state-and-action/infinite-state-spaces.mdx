@@ -1,0 +1,12 @@
+Yes, RL can deal with infinite (or extremely large) state spaces, but not always with simple tabular methods.
+
+The key idea is that an agent learns from interaction with an environment. It does not restrict RL to finite state spaces.
+
+* **Tabular RL** (storing a value for every state) requires a finite and manageable number of states.
+* **Function approximation** (neural networks, linear models, etc.) allows RL to generalize across states and handle:
+
+  * Continuous positions
+  * Continuous speeds
+  * Infinite or effectively infinite state spaces
+
+For example, if car position and speed are real numbers, there are infinitely many possible states. Modern RL methods can still learn by approximating the value function or policy rather than storing information for every state individually.

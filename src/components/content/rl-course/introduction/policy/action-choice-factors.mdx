@@ -1,0 +1,66 @@
+In reinforcement learning, a **policy** maps a state to an action. But deciding *which* action the policy should choose depends on several factors.
+
+If you are in a particular state, you would typically consider:
+
+1. **Current state information**
+
+   * What is the situation right now?
+   * What information about the environment is available?
+   * Example: In a chess game, the current board configuration is the state.
+
+2. **Goal or objective**
+
+   * What are you trying to achieve?
+   * Usually, the objective is to maximize the expected cumulative reward over time, not just the immediate reward.
+
+3. **Possible actions**
+
+   * What actions are available from the current state?
+   * Some actions may not be valid in certain states.
+
+4. **Expected consequences of each action**
+
+   * What state is each action likely to lead to?
+   * What rewards or penalties are associated with those future states?
+
+5. **Future rewards (long-term value)**
+
+   * An action with a small immediate reward may lead to much larger future rewards.
+   * This is why RL often prefers actions that maximize expected cumulative reward rather than immediate gain.
+
+6. **Uncertainty in the environment**
+
+   * If the environment is stochastic, the same action may lead to different outcomes with different probabilities.
+   * The policy should consider these probabilities.
+
+7. **Exploration vs. exploitation (during learning)**
+
+   * Should the agent choose the action it currently believes is best (exploit)?
+   * Or should it try a different action to gather more information (explore)?
+
+### Example: Robot Navigation
+
+Suppose a robot is in a room and wants to reach a charging station.
+
+**State:**
+
+* Robot's location
+* Battery level
+* Positions of obstacles
+
+**Possible actions:**
+
+* Move north
+* Move south
+* Move east
+* Move west
+
+The robot would consider:
+
+* Which moves are possible?
+* Which move gets it closer to the charger?
+* Is there an obstacle?
+* Will a longer but safer path be better?
+* Does the battery have enough charge for a detour?
+
+The policy ultimately chooses the action with the highest expected long-term benefit.

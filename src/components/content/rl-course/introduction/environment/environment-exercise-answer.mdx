@@ -1,0 +1,48 @@
+An **environment** is everything outside the agent that the agent interacts with. The environment receives the agent's actions and responds by:
+
+- changing to a new state,
+- providing a reward, and
+- presenting the next state to the agent.
+
+For example:
+
+- In a chess game, the chessboard and opponent together form the environment.
+- In a self-driving car, the roads, traffic, pedestrians, and weather are part of the environment.
+- In a robot vacuum, the room, furniture, walls, and dirt make up the environment.
+
+---
+
+### What does it mean for an environment to be stochastic?
+
+A **stochastic environment** contains randomness.
+
+The same action taken in the same state may produce different outcomes.
+
+Example:
+
+A delivery robot tries to move forward.
+
+- 90% of the time it moves forward.
+- 10% of the time it slips and stays where it is.
+
+The robot cannot predict the exact outcome every time.
+
+---
+
+### What does it mean for an environment to be stationary?
+
+A **stationary environment** has rules that do not change over time.
+
+If the agent performs the same action in the same state today or tomorrow, the probabilities and rewards remain the same.
+
+Example:
+
+A maze where the walls and rewards never change is stationary.
+
+A non-stationary environment changes over time.
+
+Example:
+
+- Traffic patterns change throughout the day.
+- A stock market changes continuously.
+- A game where opponents improve their strategies over time.

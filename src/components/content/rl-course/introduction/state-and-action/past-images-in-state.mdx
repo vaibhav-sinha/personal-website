@@ -1,0 +1,75 @@
+import CodeBlock from "../../../CodeBlock.astro";
+
+If the only input is the game image, the state should contain the information necessary to choose the best action. Rather than storing the raw pixels alone, you would want features that summarize the important aspects of the scene.
+
+A good state representation would include:
+
+* **Car information**
+
+  * Current position in the lane (left, center, right, or continuous x-coordinate)
+  * Current speed (can be inferred from motion across consecutive frames)
+  * Heading/orientation (if the car can rotate)
+
+* **Road information**
+
+  * Lane boundaries
+  * Road curvature
+  * Available drivable area
+
+* **Obstacle information**
+
+  * Positions of nearby obstacles
+  * Distance to each obstacle
+  * Relative speed of obstacles (requires multiple frames)
+  * Size and lane occupied by each obstacle
+
+* **Dynamic information**
+
+  * Velocity of the player's car
+  * Velocity and direction of moving obstacles
+  * Time-to-collision estimates
+
+* **Game context**
+
+  * Remaining road ahead (visible portion)
+  * Score or elapsed time (if relevant)
+  * Any power-ups or special objects
+
+### Why multiple images are useful
+
+A single image does not contain velocity information. For example, from one frame you cannot determine:
+
+* Whether your car is accelerating or braking.
+* Whether an obstacle is moving toward you or is stationary.
+
+Therefore, reinforcement learning agents often define the state as a **stack of the last few frames** (e.g., the last 4 images). From these consecutive frames, the agent can infer:
+
+* Speed
+* Direction of motion
+* Relative movement of obstacles
+
+### State example
+
+A compact state could look like:
+
+<CodeBlock
+  lang="text"
+  code={`State = {
+    car_x,
+    car_speed,
+    road_curvature,
+    [
+        {obstacle_x, obstacle_distance, obstacle_relative_speed},
+        ...
+    ]
+}`}
+/>
+
+If using **raw images** (as in many deep reinforcement learning approaches such as Deep Q-Networks), the state is instead represented as:
+
+<CodeBlock
+  lang="text"
+  code={`State = [Frame(t-3), Frame(t-2), Frame(t-1), Frame(t)]`}
+/>
+
+The neural network then learns these features (car position, obstacle locations, speeds, etc.) directly from the pixel data without requiring manual feature engineering.

@@ -1,0 +1,91 @@
+Yes. Even in a completely deterministic environment, a stochastic policy can be useful.
+
+The key reason is that the environment is not the only thing that matters. The agent may face situations where randomness provides strategic advantages.
+
+Some examples:
+
+### 1. Multi-agent settings (game theory)
+
+Suppose you're playing rock-paper-scissors. The environment itself is deterministic: if both players choose actions, the outcome is fixed.
+
+However, a deterministic policy is exploitable. If your opponent can predict that you'll always play Rock in a certain state, they can always play Paper.
+
+The optimal policy is stochastic:
+
+* Rock: 1/3
+* Paper: 1/3
+* Scissors: 1/3
+
+Randomization prevents exploitation.
+
+---
+
+### 2. Exploration during learning
+
+Even if the environment is deterministic, the agent may not know the environment initially.
+
+Consider a maze:
+
+* Going left eventually yields reward 10.
+* Going right eventually yields reward 100.
+
+If the agent always follows a deterministic policy based on its current knowledge, it might never discover the better path.
+
+Methods such as:
+
+* ε-greedy policies
+* Softmax/Boltzmann policies
+
+introduce randomness so the agent explores alternative actions.
+
+Once learning is complete, the final optimal policy may become deterministic.
+
+---
+
+### 3. Partial observability
+
+Sometimes different underlying states look identical to the agent.
+
+For example, two hidden situations produce the same observation, but require different actions for best performance.
+
+A stochastic policy can effectively "hedge its bets" by choosing different actions with certain probabilities.
+
+In fact, for some partially observable problems, the optimal policy is genuinely stochastic.
+
+---
+
+### 4. Multiple equally good actions
+
+Suppose in a state:
+
+* Action A gives reward 10.
+* Action B gives reward 10.
+
+A deterministic policy could choose either one.
+
+A stochastic policy could choose A with probability 0.5 and B with probability 0.5, achieving exactly the same expected return.
+
+Here randomness doesn't improve performance, but it is still an optimal policy.
+
+---
+
+### In standard MDPs
+
+For a fully observable, single-agent, finite Markov Decision Process with deterministic transitions and rewards, there always exists an optimal **deterministic** policy.
+
+So if:
+
+* the environment is deterministic,
+* the state is fully observable,
+* there is only one agent,
+
+then randomness is usually unnecessary for optimal control itself.
+
+However, stochastic policies remain useful for:
+
+* exploration during learning,
+* handling partial observability,
+* avoiding exploitation by other agents,
+* representing ties among equally good actions.
+
+So the short answer is: **yes, stochastic policies can be valuable even in deterministic environments, but in a standard fully observable single-agent MDP, an optimal deterministic policy is sufficient.**

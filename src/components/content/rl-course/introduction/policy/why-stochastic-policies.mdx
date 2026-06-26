@@ -1,0 +1,44 @@
+A **stochastic policy** maps each state to a **probability distribution over actions**, rather than always choosing the same action. There are several reasons why this is useful:
+
+1. **Exploration during learning**
+
+   * If the agent always picks the action that currently looks best (a deterministic policy), it may never discover better actions.
+   * A stochastic policy allows occasional selection of other actions, helping the agent learn more about the environment.
+
+2. **Handling uncertainty**
+
+   * In environments where the agent cannot fully observe the true state (such as partially observable environments), randomness can improve long-term performance.
+   * The same observation may correspond to different hidden situations, so always taking the same action may not be optimal.
+
+3. **Multiple equally good actions**
+
+   * Sometimes several actions have the same expected reward.
+   * A stochastic policy can assign probabilities to these actions instead of arbitrarily choosing one.
+
+4. **Preventing predictability**
+
+   * In competitive settings (e.g., games like poker or rock-paper-scissors), being deterministic makes the agent easy to exploit.
+   * Randomizing actions prevents opponents from learning a predictable pattern.
+
+5. **Optimization and learning algorithms**
+
+   * Many reinforcement learning algorithms, such as policy gradient methods, naturally represent policies as probability distributions.
+   * This makes the policy differentiable and easier to optimize using gradient-based methods.
+
+### Example
+
+Suppose an agent reaches a junction:
+
+* **Deterministic policy:**
+
+  * State S → Always go Left.
+
+* **Stochastic policy:**
+
+  * State S → Go Left with probability 0.8, Right with probability 0.2.
+
+Initially, the agent might choose Right occasionally to see if it leads to a better reward. If it turns out to be better, the probabilities can gradually shift toward Right.
+
+### When are deterministic policies sufficient?
+
+If the environment is **fully observable**, **stationary**, and there is a **single optimal action** for every state, then an optimal deterministic policy often exists. However, during learning—or in uncertain, partially observable, or adversarial environments—stochastic policies are often preferable and can even be necessary for optimal performance.

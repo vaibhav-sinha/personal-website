@@ -1,0 +1,52 @@
+import Math from "../../../Math.astro";
+
+A **deterministic policy** always chooses the same action for a given state.
+
+For example, if the agent is in state <Math latex="s" />, a deterministic policy might say:
+
+<Math display latex="\pi(s) = \text{Move Right}" />
+
+No matter how many times the agent reaches state <Math latex="s" />, it will always move right.
+
+A **stochastic policy**, on the other hand, specifies a **probability distribution over actions** rather than a single action. Instead of saying "always do this," it says "choose among these actions with certain probabilities."
+
+For example, suppose the available actions are **Left**, **Right**, and **Stay**. A stochastic policy might be:
+
+| State | Left | Right | Stay |
+| ----- | ---- | ----- | ---- |
+| <Math latex="s" /> | 0.2 | 0.7 | 0.1 |
+
+This means that whenever the agent is in state <Math latex="s" />:
+
+* It moves **Left** with probability **20%**.
+* It moves **Right** with probability **70%**.
+* It **Stays** with probability **10%**.
+
+The action is sampled randomly according to these probabilities.
+
+Mathematically, a stochastic policy is written as:
+
+<Math display latex="\pi(a \mid s) = P(A = a \mid S = s)" />
+
+which means:
+
+> "The probability of taking action <Math latex="a" /> when the agent is in state <Math latex="s" />."
+
+### Why use stochastic policies?
+
+Stochastic policies are useful because they can:
+
+* **Encourage exploration** in reinforcement learning by trying different actions.
+* **Handle uncertainty** when multiple actions are similarly good.
+* **Prevent predictability**, which is useful in competitive settings (e.g., games like rock-paper-scissors or poker).
+
+### Example
+
+Imagine a robot at an intersection.
+
+* **Deterministic policy:** "Whenever you're here, always go north."
+* **Stochastic policy:** "Go north with probability 0.8 and east with probability 0.2."
+
+Each time the robot reaches the intersection, it randomly chooses an action according to those probabilities.
+
+So when the book says **"policies may be stochastic,"** it means that the policy maps each state to a **probability distribution over possible actions**, rather than to a single fixed action.

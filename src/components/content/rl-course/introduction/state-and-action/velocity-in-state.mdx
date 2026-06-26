@@ -1,0 +1,49 @@
+import Math from "../../../Math.astro";
+
+A good state representation should contain all the information needed to predict what will happen next after taking an action. In reinforcement learning and control theory, this is called the **Markov property**: the current state should be sufficient, without needing the entire history.
+
+For a simple driving game, a useful state might include:
+
+* Car position (e.g., lane or x-coordinate)
+* Car velocity (speed)
+* Distance to the nearest obstacle(s)
+* Position/lane of the nearest obstacle(s)
+* Velocity of obstacle(s), if they move
+* Road boundaries or lane information
+* Any other game variables that affect future dynamics (e.g., remaining fuel, if applicable)
+
+### Should velocity be included?
+
+**Yes, velocity should generally be included.**
+
+The reason is that the car's future behavior depends not only on where it is, but also on how fast it is moving.
+
+For example:
+
+* Imagine the car is 20 meters from an obstacle.
+* In one case, the car is moving at **10 km/h**.
+* In another case, it is moving at **100 km/h**.
+
+The position is identical, but the optimal action is different:
+
+* At 10 km/h, you may safely continue accelerating.
+* At 100 km/h, you probably need to brake or steer immediately.
+
+If velocity is omitted, these two situations would appear to be the same state, even though their futures are very different. The agent would not have enough information to choose the best action.
+
+Another way to see this is through the game physics:
+
+* The next position is computed as something like
+
+<Math display latex="\text{position}_{t+1} = \text{position}_t + \text{velocity}_t \times \Delta t" />
+
+* Therefore, knowing only the current position is insufficient to predict the next state.
+
+### When could velocity be omitted?
+
+Velocity could be left out only if it is **fully determined by other state variables**. For example:
+
+* The game has only one fixed speed.
+* Or the speed is always recoverable from other information (e.g., it never changes, or the previous action uniquely determines it).
+
+In such cases, velocity adds no new information.

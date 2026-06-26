@@ -1,0 +1,121 @@
+import Math from "../../../Math.astro";
+import CodeBlock from "../../../CodeBlock.astro";
+
+There is no contradiction. The key idea is that the **state** depends on what the agent can observe, not just on the underlying environment.
+
+This is exactly the distinction between a **Markov state** and an **observation** in reinforcement learning.
+
+### Exercise 1: Access to the game engine API
+
+Suppose the API gives you information such as:
+
+* Car position <Math latex="(x, y)" />
+* Car velocity
+* Car acceleration
+* Lane number
+* Positions of all obstacles
+* Velocities of all obstacles
+* Road boundaries
+* Remaining fuel (if applicable)
+
+Then the state at time <Math latex="t" /> might be
+
+<Math display latex="s_t = \{\text{car position},\ \text{car velocity},\ \text{obstacle positions},\ \text{obstacle velocities},\ldots\}" />
+
+This state is **Markov**, meaning
+
+<Math display latex="P(s_{t+1}\mid s_t,a_t) = P(s_{t+1}\mid s_1,a_1,\ldots,s_t,a_t)" />
+
+The future depends only on the current state and action—not on the entire history.
+
+Notice that **velocity** is already included, so there is no need to remember previous states.
+
+---
+
+### Exercise 2: Only images are available
+
+Suppose the observation is a single screenshot.
+
+From one image you can determine
+
+* Car location
+* Obstacle locations
+* Road shape
+
+But you **cannot determine**
+
+* Car velocity
+* Obstacle velocities
+* Whether obstacles are moving toward or away from you
+
+For example:
+
+At time <Math latex="t" />:
+
+<CodeBlock
+  lang="text"
+  code={`Frame:
+      X
+     Car`}
+/>
+
+From this single frame, you cannot tell whether
+
+* the obstacle is stationary,
+* moving left,
+* moving right,
+* or whether your own car is moving fast or slowly.
+
+Two completely different physical states can produce exactly the same image.
+
+Therefore a single image is **not** a Markov state.
+
+To recover the missing information, you often stack several recent frames:
+
+<Math display latex="(o_{t-3}, o_{t-2}, o_{t-1}, o_t)" />
+
+where <Math latex="o_t" /> is the image at time <Math latex="t" />.
+
+Now you can estimate
+
+* direction of motion,
+* speed,
+* relative velocity,
+* acceleration (approximately).
+
+This history acts as a substitute for the hidden variables.
+
+---
+
+### Is the environment different?
+
+No.
+
+The environment has exactly the same true state in both cases.
+
+What changes is **what the agent observes**.
+
+There are two perspectives:
+
+* **Underlying environment state:** the complete physical configuration (positions, velocities, etc.). This is Markov.
+* **Agent observation:** what the agent actually receives (API values or images).
+
+With the API, the observation essentially equals the full state, so the problem is a **fully observable Markov decision process (MDP)**.
+
+With only images, the observation is incomplete, so the problem becomes a **partially observable Markov decision process (POMDP)**. The agent may need a history of observations (or an internal memory, such as an RNN hidden state) to infer the hidden state.
+
+---
+
+### The apparent contradiction
+
+The confusion comes from treating "image" as "state."
+
+A single image is **not** the state—it is only an **observation** of the state.
+
+So:
+
+* **True state:** same in both exercises; no history needed because it is Markov.
+* **Observation via API:** rich enough to reconstruct the state directly.
+* **Observation via image:** incomplete, so history is needed to approximate the hidden state.
+
+Thus there is no contradiction. The need for past observations arises because the observation is not Markov, even though the underlying environment state is.

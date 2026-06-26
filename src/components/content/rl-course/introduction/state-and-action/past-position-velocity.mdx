@@ -1,0 +1,71 @@
+import Math from "../../../Math.astro";
+
+This question is really about choosing a **state representation** that is sufficient for making optimal decisions. The key idea comes from the **Markov property**: the state should contain all the information needed to predict future outcomes given the current action.
+
+For a simple driving game, a reasonable state might include:
+
+* Current position of the car (lane or x-coordinate)
+* Current speed (velocity)
+* Current heading (if steering is continuous)
+* Positions of nearby obstacles
+* Velocities of nearby obstacles (if they move)
+* Distance to the next obstacle
+* Road geometry ahead (curves, lane boundaries, etc., if applicable)
+* Current acceleration (if the dynamics depend on it)
+
+### Should past position be included?
+
+Usually, **no**.
+
+If the current position and current velocity are already known, the previous position does not provide any additional information. The previous position was only useful for *computing* velocity:
+
+<Math display latex="v \approx \frac{x_t - x_{t-1}}{\Delta t}" />
+
+Once velocity is explicitly part of the state, the old position becomes redundant.
+
+### Should current velocity be included?
+
+**Yes**, in almost all driving problems.
+
+Imagine two situations:
+
+* Car A is at position (x=100) moving at 20 m/s.
+* Car B is at the same position (x=100) but stopped.
+
+The best action is likely different. Car A may need to brake immediately to avoid a collision, while Car B may safely accelerate.
+
+The current position alone is therefore **not sufficient**.
+
+### Should past velocity be included?
+
+Usually, **no**.
+
+If the vehicle dynamics are Markovian (which they usually are), the next state depends on:
+
+* current position,
+* current velocity,
+* current action.
+
+The previous velocity does not add new information because it only tells you how the current velocity changed.
+
+The exception is when acceleration or other hidden dynamics matter. For example, if the car has momentum effects or actuator delays and acceleration is **not** explicitly represented, then knowing the previous velocity could help estimate acceleration.
+
+### General principle
+
+A good state representation contains the **minimum information necessary to predict the future**.
+
+For a simple car game:
+
+* ✔ Current position
+* ✔ Current velocity
+* ✔ Current positions (and possibly velocities) of obstacles
+* ✔ Road information
+
+Typically **not needed**:
+
+* ✘ Previous position
+* ✘ Previous velocity
+
+unless the environment is only partially observable or the physics depend on quantities (such as acceleration) that are not otherwise included.
+
+So, in a standard reinforcement learning formulation of this game, you would include **current velocity** but **not past position or past velocity**, because the current state already contains the information needed to choose the next action.
