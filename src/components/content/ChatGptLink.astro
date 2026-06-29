@@ -1,0 +1,18 @@
+---
+interface Props {
+  prompt: string;
+}
+
+const { prompt } = Astro.props;
+
+const href = `https://chatgpt.com/?q=${encodeURIComponent(prompt)}`;
+---
+
+<a
+  href={href}
+  target="_blank"
+  rel="noopener noreferrer"
+  class="chatgpt-link"
+>
+  <slot />
+</a>

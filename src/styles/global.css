@@ -148,6 +148,12 @@ a {
   text-decoration-color: var(--color-accent);
 }
 
+.prose-lesson :where(a.chatgpt-link):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--color-accent);
+}
+
 .link-subtle {
   text-decoration: none;
   transition: color 0.15s ease;

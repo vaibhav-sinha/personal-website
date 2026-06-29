@@ -6,6 +6,7 @@ order: 1
 ---
 
 import BookReading from "../../components/content/BookReading.astro";
+import ChatGptLink from "../../components/content/ChatGptLink.astro";
 import Question from "../../components/content/Question.astro";
 import RLProblem from "../../components/content/RLProblem.astro";
 import ThinkingExercise from "../../components/content/ThinkingExercise.astro";
@@ -158,3 +159,86 @@ Answer the following questions about policies:
 
   <EnvironmentExerciseAnswer slot="answer" />
 </ThinkingExercise>
+
+
+## Reward and Value Function
+
+An agent which interacts with an environment is given a numeric reward on each time step which depends on the state the agent is in,
+and the action that is taken by the agent. The reward provided is a property of the environment. Rewards can also be stochastic i.e.
+for the same chosen action in a given state, the agent might get different rewards different times. The objective of the agent is to collect
+as much reward as possible over time. The rewards guide the agent in learning what actions to take in different states.
+
+Based on your understanding of rewards until now, answer the following questions. 
+
+<Question>
+  The reward is defined as a single number at each time step. Does this limit the kind of applications for which RL can be used?
+  In a real world problem, the reward one might get for achieving a task might be something tangible, and not a numeric quantity.
+</Question>
+
+<Question>
+  Rewards are defined to be provided per time step. Let's take the example of a game of chess. Would you choose to assign positive
+  rewards whenever an agent takes one of opponent pieces? Or would you assign positive reward only if the agent wins the game? What about
+  assigning negative rewards when the agent's pieces are taken by the opponent?
+</Question>
+
+<Question>
+  Again taking the example of chess, we could choose to assign rewards -10 if the agent loses, 0 if the match is a draw, and +10 if the
+  agent wins. Another choice could be assigning 0 on loss, 10 on draw and 20 on win. In the second case, we have just offset the rewards
+  by 10 points, but the delta between rewards for each outcome is the same. Intuitively, do you think absolute reward values should matter
+  for learning how to do the task or only the relative values should matter?
+</Question>
+
+<Question>
+  If you knew the reward provided for each action in a given state by the environment, then why would you not always take the action which
+  provides the highest reward?
+</Question>
+
+<Question>
+  Can a strategy which always takes the action which yields the highest reward in each state still end up being worse that other strategies?
+</Question>
+
+<Question>
+  Let's say you have an environment which only provides rewards when you take a specific action but you can not query the environment
+  to tell you how much reward each action would yield. How would you learn to take optimal decisions for such an environment? For example,
+  your agent might be learning to drive a car. In a particular situation, only once you take a steering decision you would get to know
+  whether it caused an accident or not. Before applying the action, the world will not tell you what will happen in the future.
+</Question>
+
+Once you have answered the above set of questions, I hope it would have become clear that taking an action which yields the highest 
+immediate reward (referred to as a greedy policy), is generally not optimal. Instead, what one should care about is long term rewards.
+For example, in a game of chess, it might be possible to gain a large immediate reward by taking a piece (assuming that positive rewards
+are provided whenever the agent takes a piece), but strategically it might be the wrong move causing the agent to eventually lose the
+game and get a very large negative reward.
+
+We should also notice that rewards can be stochastic. Hence, we cannot be sure of the reward we get if we take an action. Therefore, most
+of the time we would be talking about <ChatGptLink prompt="Explain expectation in probability theory">expected</ChatGptLink> reward. 
+
+Now that we understand that long term rewards are what really matter when deciding on a strategy, let's think about it a little deeper.
+
+<ThinkingExercise>
+  Let's say you are an observer of a game of chess. You are looking at the board from the perspective of player A. We need to consider a particular
+  board state, and determine if it is a good position or not for player A.
+</ThinkingExercise>
+
+Once you have spent some time thinking about it, try and answer the following questions.
+
+<Question>
+  Ignoring the winning or losing states, for all the other states, do you need to know anything about the player A (their skill level, playing strategy, etc)
+  to determineis a position is good or not? Why?
+</Question>
+
+<Question>
+  If you need to know about player A to be able to answer whether a given position is good or not, does that mean that the long term
+  reward that you expect to get (i.e. win/loss) is not purely a function of the state but also of the player (or playing strategy)?
+</Question>
+
+<Question>
+  If the long term reward depends both on state and strategy, then should we try to learn the action to take in that state which maximizes
+  the long-term reward for the current player, or should we try to learn the action which optimizes the reward for the best player?
+</Question>
+
+How good is a state is measured by its value function. The value function is the expected total reward from that state given a particular policy (policy is the strategy of a player).
+We can obviously have a value function for a state which does not depend on a particular policy. In that case, we could calculate the 
+expected value of that state by calculating the expectation over all the possible policies. The distribution of policies might be
+considered uniform. But in actual learning process, we care about how good is a state for a particular policy, not in general. This will
+become evident when we look into algorithms for policy learning.
