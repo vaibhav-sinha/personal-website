@@ -22,9 +22,19 @@ import WhyStochasticPolicies from "../../components/content/rl-course/introducti
 import StochasticPoliciesDeterministicEnv from "../../components/content/rl-course/introduction/policy/stochastic-policies-deterministic-env.mdx";
 import ActionChoiceFactors from "../../components/content/rl-course/introduction/policy/action-choice-factors.mdx";
 import EnvironmentExerciseAnswer from "../../components/content/rl-course/introduction/environment/environment-exercise-answer.mdx";
+import NumericRewardApplicationLimitations from "../../components/content/rl-course/introduction/reward-and-value-function/numeric-reward-application-limitations.mdx";
+import ChessPerStepRewards from "../../components/content/rl-course/introduction/reward-and-value-function/chess-per-step-rewards.mdx";
+import AbsoluteVsRelativeRewardValues from "../../components/content/rl-course/introduction/reward-and-value-function/absolute-vs-relative-reward-values.mdx";
+import WhyNotAlwaysMaxReward from "../../components/content/rl-course/introduction/reward-and-value-function/why-not-always-max-reward.mdx";
+import GreedyStrategyWorseThanOthers from "../../components/content/rl-course/introduction/reward-and-value-function/greedy-strategy-worse-than-others.mdx";
+import LearningWithoutRewardQuery from "../../components/content/rl-course/introduction/reward-and-value-function/learning-without-reward-query.mdx";
+import PlayerInfoForPositionQuality from "../../components/content/rl-course/introduction/reward-and-value-function/player-info-for-position-quality.mdx";
+import LongTermRewardDependsOnPolicy from "../../components/content/rl-course/introduction/reward-and-value-function/long-term-reward-depends-on-policy.mdx";
+import OptimizeCurrentVsBestPlayer from "../../components/content/rl-course/introduction/reward-and-value-function/optimize-current-vs-best-player.mdx";
 import { carGameProblem } from "../../data/rl-course/car-game-problem";
 import { carGamePrompt, carGameThinkingExerciseApi, carGameThinkingExerciseImages } from "../../data/rl-course/car-game-prompts";
 import { policyPrompt } from "../../data/rl-course/policy-prompts";
+import { rewardPrompt, rewardValuePrompt } from "../../data/rl-course/reward-value-prompts";
 
 Reinforcement learning (RL) is about learning what to do — how to map situations to actions — so as to maximize a cumulative reward.
 To get a high level idea about RL, read the introductory chapter from the Sutton and Barto book and then come back here.
@@ -170,39 +180,53 @@ as much reward as possible over time. The rewards guide the agent in learning wh
 
 Based on your understanding of rewards until now, answer the following questions. 
 
-<Question>
-  The reward is defined as a single number at each time step. Does this limit the kind of applications for which RL can be used?
-  In a real world problem, the reward one might get for achieving a task might be something tangible, and not a numeric quantity.
-</Question>
+<div class="my-4 space-y-4">
+  <Question prompt={rewardPrompt("The reward is defined as a single number at each time step. Does this limit the kind of applications for which RL can be used? In a real world problem, the reward one might get for achieving a task might be something tangible, and not a numeric quantity.")}>
+    The reward is defined as a single number at each time step. Does this limit the kind of applications for which RL can be used?
+    In a real world problem, the reward one might get for achieving a task might be something tangible, and not a numeric quantity.
 
-<Question>
-  Rewards are defined to be provided per time step. Let's take the example of a game of chess. Would you choose to assign positive
-  rewards whenever an agent takes one of opponent pieces? Or would you assign positive reward only if the agent wins the game? What about
-  assigning negative rewards when the agent's pieces are taken by the opponent?
-</Question>
+    <NumericRewardApplicationLimitations slot="answer" />
+  </Question>
 
-<Question>
-  Again taking the example of chess, we could choose to assign rewards -10 if the agent loses, 0 if the match is a draw, and +10 if the
-  agent wins. Another choice could be assigning 0 on loss, 10 on draw and 20 on win. In the second case, we have just offset the rewards
-  by 10 points, but the delta between rewards for each outcome is the same. Intuitively, do you think absolute reward values should matter
-  for learning how to do the task or only the relative values should matter?
-</Question>
+  <Question prompt={rewardPrompt("Rewards are defined to be provided per time step. Let's take the example of a game of chess. Would you choose to assign positive rewards whenever an agent takes one of opponent pieces? Or would you assign positive reward only if the agent wins the game? What about assigning negative rewards when the agent's pieces are taken by the opponent?")}>
+    Rewards are defined to be provided per time step. Let's take the example of a game of chess. Would you choose to assign positive
+    rewards whenever an agent takes one of opponent pieces? Or would you assign positive reward only if the agent wins the game? What about
+    assigning negative rewards when the agent's pieces are taken by the opponent?
 
-<Question>
-  If you knew the reward provided for each action in a given state by the environment, then why would you not always take the action which
-  provides the highest reward?
-</Question>
+    <ChessPerStepRewards slot="answer" />
+  </Question>
 
-<Question>
-  Can a strategy which always takes the action which yields the highest reward in each state still end up being worse that other strategies?
-</Question>
+  <Question prompt={rewardPrompt("Again taking the example of chess, we could choose to assign rewards -10 if the agent loses, 0 if the match is a draw, and +10 if the agent wins. Another choice could be assigning 0 on loss, 10 on draw and 20 on win. In the second case, we have just offset the rewards by 10 points, but the delta between rewards for each outcome is the same. Intuitively, do you think absolute reward values should matter for learning how to do the task or only the relative values should matter?")}>
+    Again taking the example of chess, we could choose to assign rewards -10 if the agent loses, 0 if the match is a draw, and +10 if the
+    agent wins. Another choice could be assigning 0 on loss, 10 on draw and 20 on win. In the second case, we have just offset the rewards
+    by 10 points, but the delta between rewards for each outcome is the same. Intuitively, do you think absolute reward values should matter
+    for learning how to do the task or only the relative values should matter?
 
-<Question>
-  Let's say you have an environment which only provides rewards when you take a specific action but you can not query the environment
-  to tell you how much reward each action would yield. How would you learn to take optimal decisions for such an environment? For example,
-  your agent might be learning to drive a car. In a particular situation, only once you take a steering decision you would get to know
-  whether it caused an accident or not. Before applying the action, the world will not tell you what will happen in the future.
-</Question>
+    <AbsoluteVsRelativeRewardValues slot="answer" />
+  </Question>
+
+  <Question prompt={rewardPrompt("If you knew the reward provided for each action in a given state by the environment, then why would you not always take the action which provides the highest reward?")}>
+    If you knew the reward provided for each action in a given state by the environment, then why would you not always take the action which
+    provides the highest reward?
+
+    <WhyNotAlwaysMaxReward slot="answer" />
+  </Question>
+
+  <Question prompt={rewardPrompt("Can a strategy which always takes the action which yields the highest reward in each state still end up being worse that other strategies?")}>
+    Can a strategy which always takes the action which yields the highest reward in each state still end up being worse that other strategies?
+
+    <GreedyStrategyWorseThanOthers slot="answer" />
+  </Question>
+
+  <Question prompt={rewardPrompt("Let's say you have an environment which only provides rewards when you take a specific action but you can not query the environment to tell you how much reward each action would yield. How would you learn to take optimal decisions for such an environment? For example, your agent might be learning to drive a car. In a particular situation, only once you take a steering decision you would get to know whether it caused an accident or not. Before applying the action, the world will not tell you what will happen in the future.")}>
+    Let's say you have an environment which only provides rewards when you take a specific action but you can not query the environment
+    to tell you how much reward each action would yield. How would you learn to take optimal decisions for such an environment? For example,
+    your agent might be learning to drive a car. In a particular situation, only once you take a steering decision you would get to know
+    whether it caused an accident or not. Before applying the action, the world will not tell you what will happen in the future.
+
+    <LearningWithoutRewardQuery slot="answer" />
+  </Question>
+</div>
 
 Once you have answered the above set of questions, I hope it would have become clear that taking an action which yields the highest 
 immediate reward (referred to as a greedy policy), is generally not optimal. Instead, what one should care about is long term rewards.
@@ -222,20 +246,28 @@ Now that we understand that long term rewards are what really matter when decidi
 
 Once you have spent some time thinking about it, try and answer the following questions.
 
-<Question>
-  Ignoring the winning or losing states, for all the other states, do you need to know anything about the player A (their skill level, playing strategy, etc)
-  to determineis a position is good or not? Why?
-</Question>
+<div class="my-4 space-y-4">
+  <Question prompt={rewardValuePrompt("Ignoring the winning or losing states, for all the other states, do you need to know anything about the player A (their skill level, playing strategy, etc) to determine if a position is good or not? Why?")}>
+    Ignoring the winning or losing states, for all the other states, do you need to know anything about the player A (their skill level, playing strategy, etc)
+    to determineis a position is good or not? Why?
 
-<Question>
-  If you need to know about player A to be able to answer whether a given position is good or not, does that mean that the long term
-  reward that you expect to get (i.e. win/loss) is not purely a function of the state but also of the player (or playing strategy)?
-</Question>
+    <PlayerInfoForPositionQuality slot="answer" />
+  </Question>
 
-<Question>
-  If the long term reward depends both on state and strategy, then should we try to learn the action to take in that state which maximizes
-  the long-term reward for the current player, or should we try to learn the action which optimizes the reward for the best player?
-</Question>
+  <Question prompt={rewardValuePrompt("If you need to know about player A to be able to answer whether a given position is good or not, does that mean that the long term reward that you expect to get (i.e. win/loss) is not purely a function of the state but also of the player (or playing strategy)?")}>
+    If you need to know about player A to be able to answer whether a given position is good or not, does that mean that the long term
+    reward that you expect to get (i.e. win/loss) is not purely a function of the state but also of the player (or playing strategy)?
+
+    <LongTermRewardDependsOnPolicy slot="answer" />
+  </Question>
+
+  <Question prompt={rewardValuePrompt("If the long term reward depends both on state and strategy, then should we try to learn the action to take in that state which maximizes the long-term reward for the current player, or should we try to learn the action which optimizes the reward for the best player?")}>
+    If the long term reward depends both on state and strategy, then should we try to learn the action to take in that state which maximizes
+    the long-term reward for the current player, or should we try to learn the action which optimizes the reward for the best player?
+
+    <OptimizeCurrentVsBestPlayer slot="answer" />
+  </Question>
+</div>
 
 How good is a state is measured by its value function. The value function is the expected total reward from that state given a particular policy (policy is the strategy of a player).
 We can obviously have a value function for a state which does not depend on a particular policy. In that case, we could calculate the 
