@@ -21,23 +21,21 @@ const hasAnswer = Astro.slots.has("answer");
       ?
     </span>
     <div class="min-w-0 flex-1">
-      <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
-        <div class="min-w-0 font-serif text-base leading-relaxed text-(--color-prose) [&_p]:m-0">
-          <slot />
-        </div>
-        {
-          chatGptUrl && (
-            <a
-              href={chatGptUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="link-subtle shrink-0 self-start font-mono text-xs leading-relaxed text-(--color-muted) sm:mt-1"
-            >
-              Ask AI ↗
-            </a>
-          )
-        }
+      <div class="min-w-0 font-serif text-base leading-relaxed text-(--color-prose) [&_p]:m-0">
+        <slot />
       </div>
+      {
+        chatGptUrl && (
+          <a
+            href={chatGptUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="link-subtle mt-2 inline-block font-mono text-xs leading-relaxed text-(--color-muted)"
+          >
+            Ask AI ↗
+          </a>
+        )
+      }
       {
         hasAnswer && (
           <details class="mt-3">
