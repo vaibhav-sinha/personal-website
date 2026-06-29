@@ -1,0 +1,65 @@
+---
+import {
+  getNavItemHref,
+  isNavItemActive,
+  rlCourseNav,
+} from "../../data/rl-course-nav";
+
+interface Props {
+  currentSlug?: string;
+}
+
+const { currentSlug } = Astro.props;
+
+function parentLinkClass(isActive: boolean, isParentActive: boolean, hasChildren: boolean) {
+  const classes = ["nav-link"];
+  if (isActive) classes.push("nav-link-active");
+  else if (hasChildren && isParentActive) classes.push("nav-link-parent-active");
+  return classes;
+}
+---
+
+{
+  rlCourseNav.map((group) => (
+    <div class="mb-6 last:mb-0 lg:mb-8">
+      <p class="nav-section-label mb-2 lg:mb-3">{group.section}</p>
+      <ul>
+        {group.items.map((item) => {
+          const isParentActive = isNavItemActive(item, currentSlug);
+          const isCurrentPage = currentSlug === item.slug;
+          const hasChildren = item.children && item.children.length > 0;
+
+          return (
+            <li>
+              <a
+                href={getNavItemHref(item.slug)}
+                class:list={parentLinkClass(isCurrentPage, isParentActive, !!hasChildren)}
+                aria-current={isCurrentPage ? "page" : undefined}
+              >
+                {item.title}
+              </a>
+              {hasChildren && (
+                <ul class="nav-children">
+                  {item.children!.map((child) => {
+                    const isChildActive = currentSlug === child.slug;
+                    return (
+                      <li>
+                        <a
+                          href={getNavItemHref(child.slug)}
+                          class:list={["nav-link", isChildActive && "nav-link-active"]}
+                          aria-current={isChildActive ? "page" : undefined}
+                        >
+                          {child.title}
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  ))
+}

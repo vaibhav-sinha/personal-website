@@ -1,0 +1,59 @@
+---
+import { flattenNav, rlCourseNav } from "../../data/rl-course-nav";
+import CourseNavList from "./CourseNavList.astro";
+
+interface Props {
+  currentSlug?: string;
+}
+
+const { currentSlug } = Astro.props;
+
+const currentTitle = currentSlug
+  ? flattenNav(rlCourseNav).find((item) => item.slug === currentSlug)?.title
+  : undefined;
+---
+
+<div class="course-mobile-nav sticky top-0 z-10 border-b border-(--color-border) bg-(--color-surface) lg:hidden">
+  <details class="group">
+    <summary
+      class="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 [&::-webkit-details-marker]:hidden"
+    >
+      <span class="min-w-0">
+        <span class="nav-section-label block">Course contents</span>
+        <span class="mt-0.5 block truncate font-mono text-sm text-(--color-text)">
+          {currentTitle ?? "Browse lessons"}
+        </span>
+      </span>
+      <svg
+        class="size-4 shrink-0 text-(--color-muted) transition-transform group-open:rotate-180"
+        viewBox="0 0 16 16"
+        fill="none"
+        aria-hidden="true"
+      >
+        <path
+          d="M4 6l4 4 4-4"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    </summary>
+
+    <nav
+      class="max-h-[min(60vh,24rem)] overflow-y-auto border-t border-(--color-border) px-4 py-4"
+      aria-label="Course navigation"
+    >
+      <CourseNavList currentSlug={currentSlug} />
+    </nav>
+  </details>
+</div>
+
+<script>
+  document.querySelectorAll(".course-mobile-nav a").forEach((link) => {
+    link.addEventListener("click", () => {
+      const details = link.closest(".course-mobile-nav details");
+      details?.removeAttribute("open");
+    });
+  });
+</script>

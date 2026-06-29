@@ -1,5 +1,6 @@
 ---
 import BaseLayout from "./BaseLayout.astro";
+import CourseMobileNav from "../components/course/CourseMobileNav.astro";
 import CourseSidebar from "../components/course/CourseSidebar.astro";
 import PrevNext from "../components/course/PrevNext.astro";
 import { courseMeta } from "../data/rl-course-nav";
@@ -26,10 +27,12 @@ const { title, description, currentSlug, prev = null, next = null } = Astro.prop
       </div>
     </header>
 
-    <div class="mx-auto flex w-full max-w-6xl flex-1">
+    <CourseMobileNav currentSlug={currentSlug} />
+
+    <div class="mx-auto flex w-full max-w-6xl flex-1 flex-col lg:flex-row">
       <CourseSidebar currentSlug={currentSlug} />
 
-      <main class="min-w-0 flex-1 px-6 py-10 lg:px-10">
+      <main class="min-w-0 flex-1 px-4 py-8 sm:px-6 lg:px-10 lg:py-10">
         <article class="mx-auto max-w-(--content-max)">
           <header class="mb-10 border-b border-(--color-border) pb-8">
             <h1 class="font-sans text-3xl font-semibold tracking-tight text-(--color-text-bright)">
