@@ -13,15 +13,15 @@ const hasAnswer = Astro.slots.has("answer");
 ---
 
 <div>
-  <div class="not-prose flex items-start gap-3">
+  <div class="flex items-start gap-3">
     <span
-      class="mt-1 shrink-0 font-mono text-xs text-(--color-muted)"
+      class="not-prose mt-1 shrink-0 font-mono text-xs text-(--color-muted)"
       aria-hidden="true"
     >
       ?
     </span>
     <div class="min-w-0 flex-1">
-      <div class="min-w-0 font-serif text-base leading-relaxed text-(--color-prose) [&_p]:m-0">
+      <div class="not-prose min-w-0 font-serif text-base leading-relaxed text-(--color-prose) [&_p]:m-0">
         <slot />
       </div>
       {
@@ -30,7 +30,7 @@ const hasAnswer = Astro.slots.has("answer");
             href={chatGptUrl}
             target="_blank"
             rel="noopener noreferrer"
-            class="link-subtle mt-2 inline-block font-mono text-xs leading-relaxed text-(--color-muted)"
+            class="not-prose link-subtle mt-2 inline-block font-mono text-xs leading-relaxed text-(--color-muted)"
           >
             Ask AI ↗
           </a>

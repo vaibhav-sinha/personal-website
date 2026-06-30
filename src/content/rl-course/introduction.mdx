@@ -30,7 +30,6 @@ import GreedyStrategyWorseThanOthers from "../../components/content/rl-course/in
 import LearningWithoutRewardQuery from "../../components/content/rl-course/introduction/reward-and-value-function/learning-without-reward-query.mdx";
 import PlayerInfoForPositionQuality from "../../components/content/rl-course/introduction/reward-and-value-function/player-info-for-position-quality.mdx";
 import LongTermRewardDependsOnPolicy from "../../components/content/rl-course/introduction/reward-and-value-function/long-term-reward-depends-on-policy.mdx";
-import OptimizeCurrentVsBestPlayer from "../../components/content/rl-course/introduction/reward-and-value-function/optimize-current-vs-best-player.mdx";
 import { carGameProblem } from "../../data/rl-course/car-game-problem";
 import { carGamePrompt, carGameThinkingExerciseApi, carGameThinkingExerciseImages } from "../../data/rl-course/car-game-prompts";
 import { policyPrompt } from "../../data/rl-course/policy-prompts";
@@ -260,13 +259,6 @@ Once you have spent some time thinking about it, try and answer the following qu
 
     <LongTermRewardDependsOnPolicy slot="answer" />
   </Question>
-
-  <Question prompt={rewardValuePrompt("If the long term reward depends both on state and strategy, then should we try to learn the action to take in that state which maximizes the long-term reward for the current player, or should we try to learn the action which optimizes the reward for the best player?")}>
-    If the long term reward depends both on state and strategy, then should we try to learn the action to take in that state which maximizes
-    the long-term reward for the current player, or should we try to learn the action which optimizes the reward for the best player?
-
-    <OptimizeCurrentVsBestPlayer slot="answer" />
-  </Question>
 </div>
 
 How good is a state is measured by its value function. The value function is the expected total reward from that state given a particular policy (policy is the strategy of a player).
@@ -274,3 +266,12 @@ We can obviously have a value function for a state which does not depend on a pa
 expected value of that state by calculating the expectation over all the possible policies. The distribution of policies might be
 considered uniform. But in actual learning process, we care about how good is a state for a particular policy, not in general. This will
 become evident when we look into algorithms for policy learning.
+
+## Model
+
+The model of the environment mimics how the environment would behave when an action is taken in a given state. Hence, the learning
+algorithm can query the model for the next state and reward as a result of taking an action without actually taking that action while
+interacting with the actual environment. It seems quite obvious that having a model can be very beneficial in the learning process
+since we can get to know what the environment will do. For example, if the agent was trying to learn how to drive a car, a model of
+the world could tell it what would happen if a particular steering action was taken. However, it also seems quite unlikely that such
+a model would be available for most of the problems involving complex environments. 

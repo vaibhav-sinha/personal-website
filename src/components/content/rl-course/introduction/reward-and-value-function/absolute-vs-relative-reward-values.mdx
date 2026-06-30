@@ -1,0 +1,46 @@
+import Math from "../../../Math.astro";
+
+For this chess example, **only the relative differences between outcomes should matter**, not the absolute values.
+
+Here's why:
+
+* In the first reward scheme:
+
+  * Loss = **−10**
+  * Draw = **0**
+  * Win = **+10**
+
+* In the second reward scheme:
+
+  * Loss = **0**
+  * Draw = **10**
+  * Win = **20**
+
+The second scheme is simply the first one plus a constant value of **+10** for every terminal outcome. The ordering of outcomes remains identical:
+
+* Win > Draw > Loss
+* Win is 10 points better than Draw.
+* Draw is 10 points better than Loss.
+
+An optimal agent is trying to maximize **expected cumulative reward**. If every possible outcome receives the same constant offset, then every policy's return is increased by the same amount (or by a predictable constant factor in episodic tasks with fixed episode length). Therefore, the policy that was optimal before remains optimal.
+
+### Intuition
+
+Imagine two students taking an exam:
+
+* Original scores: Alice = 80, Bob = 70.
+* The teacher decides to add 10 bonus marks to everyone.
+* New scores: Alice = 90, Bob = 80.
+
+The ranking hasn't changed. Alice is still ahead by 10 marks. Likewise, an RL agent still prefers winning over drawing and drawing over losing.
+
+### A small caveat
+
+This invariance holds cleanly when the same constant is added to all rewards in comparable episodes (such as terminal rewards in chess, where every game ends with exactly one terminal reward). In more general reinforcement learning settings, adding a constant reward **at every time step** can change the agent's preferences if episode lengths differ, because longer episodes accumulate more of the added constant. For discounted infinite-horizon problems, adding a constant shifts returns by the same constant factor <Math latex="\frac{c}{1-\gamma}" />, which again does not change the optimal policy.
+
+### Conclusion
+
+For the chess reward schemes you described:
+
+* **(-10, 0, +10)** and **(0, 10, 20)** should lead to the **same optimal strategy**.
+* The **relative differences** between rewards are what determine the agent's preferences, while the absolute values themselves are not important in this case.

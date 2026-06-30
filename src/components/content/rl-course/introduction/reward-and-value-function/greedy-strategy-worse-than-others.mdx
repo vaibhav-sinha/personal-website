@@ -1,0 +1,59 @@
+import Math from "../../../Math.astro";
+
+Yes. A strategy that **always chooses the action with the highest immediate reward** (a *greedy* strategy) can perform worse than strategies that sometimes accept a smaller immediate reward to achieve larger future rewards.
+
+The key reason is that in reinforcement learning, the objective is to **maximize the cumulative (expected) reward over time**, not just the reward received on the current step.
+
+### Example
+
+Suppose an agent starts in state **S** and has two actions:
+
+* **Action A**
+
+  * Immediate reward: **+10**
+  * Transitions to a terminal state (episode ends).
+
+* **Action B**
+
+  * Immediate reward: **+2**
+  * Leads to another state where the agent can receive **+20** on the next step.
+
+The total rewards are:
+
+* Greedy strategy:
+
+  * Choose **A** → Total reward = **10**
+
+* Far-sighted strategy:
+
+  * Choose **B** → Total reward = **2 + 20 = 22**
+
+Although Action A gives the highest reward in the current state, it leads to a lower overall return.
+
+### Stochastic rewards
+
+The same idea applies when rewards are stochastic. For example:
+
+* Action A:
+
+  * Always gives reward **8**.
+
+* Action B:
+
+  * Gives reward **0** immediately, but leads to a state where the expected future reward is **15**.
+
+The expected return of Action B is still higher, even though its immediate reward is lower.
+
+### Why reinforcement learning doesn't simply maximize immediate reward
+
+Reinforcement learning algorithms evaluate actions using their **expected return**, typically defined as
+
+<Math display latex="G_t = R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + \cdots," />
+
+where:
+
+* <Math latex="R_{t+i}" /> is the reward received <Math latex="i" /> steps in the future.
+* <Math latex="\gamma" /> (the discount factor) determines how much future rewards are valued.
+
+The optimal policy chooses actions that maximize this expected cumulative return, not the immediate reward.
+

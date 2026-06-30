@@ -121,7 +121,8 @@ a {
   letter-spacing: -0.02em;
 }
 
-.prose-lesson :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+/* Inline code only — exclude fenced code blocks (pre > code) */
+.prose-lesson :where(:not(pre) > code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   font-family: var(--font-mono);
   font-size: 0.85em;
   background: var(--color-surface-raised);
@@ -133,9 +134,19 @@ a {
 }
 
 /* Typography adds decorative backticks; disable when using pill-style inline code */
-.prose-lesson :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *))::before,
-.prose-lesson :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *))::after {
+.prose-lesson :where(:not(pre) > code):not(:where([class~="not-prose"], [class~="not-prose"] *))::before,
+.prose-lesson :where(:not(pre) > code):not(:where([class~="not-prose"], [class~="not-prose"] *))::after {
   content: none;
+}
+
+.prose-lesson :where(pre code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  background: transparent;
+  border: none;
+  padding: 0;
+  border-radius: 0;
+  color: inherit;
+  font-size: inherit;
+  font-weight: 400;
 }
 
 .prose-lesson :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) {

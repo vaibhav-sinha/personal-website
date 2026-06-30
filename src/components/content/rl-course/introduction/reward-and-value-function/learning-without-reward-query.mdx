@@ -1,0 +1,273 @@
+import Math from "../../../Math.astro";
+
+This is exactly the central challenge that **reinforcement learning (RL)** is designed to solve.
+
+The key idea is that the agent **cannot know the reward of an action before taking it**. Instead, it must **learn from experience** by interacting with the environment many times.
+
+### Why this is difficult
+
+Suppose a car is approaching an intersection.
+
+Possible actions:
+
+* Turn left
+* Turn right
+* Brake
+* Accelerate
+
+The environment does not reveal:
+
+| Action     | Future reward |
+| ---------- | ------------- |
+| Left       | ?             |
+| Right      | ?             |
+| Brake      | ?             |
+| Accelerate | ?             |
+
+The only way to find out is to actually execute one of the actions and observe what happens.
+
+For example:
+
+```
+State: approaching intersection
+
+Action: Turn left
+
+Result:
+- No collision
+- Reach destination
+Reward = +20
+```
+
+Another episode:
+
+```
+Same state
+
+Action: Accelerate
+
+Result:
+- Collision
+Reward = -100
+```
+
+Over many experiences, the agent gradually estimates which actions are good.
+
+---
+
+## How does it learn?
+
+The agent maintains estimates of how valuable actions are.
+
+For example, it learns an **action-value function**
+
+<Math display latex="Q(s,a)" />
+
+which means
+
+> "How much total future reward can I expect if I take action <Math latex="a" /> in state <Math latex="s" />?"
+
+Initially,
+
+```
+Q(left) = 0
+Q(right) = 0
+Q(brake) = 0
+Q(accelerate) = 0
+```
+
+The agent knows nothing.
+
+It tries an action.
+
+Suppose
+
+```
+Take left
+
+Receive reward = +20
+```
+
+Now it updates
+
+```
+Q(left) = 20
+```
+
+Later
+
+```
+Take accelerate
+
+Reward = -100
+```
+
+Update
+
+```
+Q(accelerate) = -100
+```
+
+After thousands of experiences,
+
+```
+Left       +18
+Right      +12
+Brake      +10
+Accelerate -95
+```
+
+Now the best action is obvious.
+
+---
+
+## But how does it discover good actions?
+
+This is the famous **exploration vs exploitation** problem.
+
+If the agent always chooses the action with the highest current estimate, it may never discover something better.
+
+Instead, it balances:
+
+* **Exploration**: try unfamiliar actions
+* **Exploitation**: choose the action currently believed to be best
+
+One common strategy is **ε-greedy**.
+
+Example:
+
+```
+ε = 0.1
+
+90% of the time:
+    choose best action
+
+10% of the time:
+    choose a random action
+```
+
+This allows continuous learning.
+
+---
+
+## Delayed rewards
+
+Driving is even harder because the reward is often delayed.
+
+Example:
+
+```
+Time 1:
+Turn left
+
+Reward = 0
+
+Time 2:
+Continue
+
+Reward = 0
+
+Time 3:
+Car crashes
+
+Reward = -100
+```
+
+Which action caused the crash?
+
+RL algorithms solve this using **credit assignment**.
+
+Methods such as:
+
+* Q-learning
+* SARSA
+* Temporal Difference (TD) learning
+* Monte Carlo methods
+
+propagate the future reward backward to earlier decisions.
+
+Instead of only blaming the crash itself, they learn
+
+```
+Turn left
+    ↓
+Continue
+    ↓
+Crash
+```
+
+so eventually
+
+```
+Q(turn left)
+```
+
+also decreases.
+
+---
+
+## What if rewards are stochastic?
+
+Suppose turning left succeeds 80% of the time and fails 20%.
+
+Rewards observed:
+
+```
++10
++10
+-100
++10
++10
++10
+-100
+```
+
+The agent does **not** memorize individual outcomes.
+
+Instead, it estimates the **expected return**.
+
+For example
+
+```
+Expected reward
+
+= 0.8 × 10 + 0.2 × (-100)
+
+= -12
+```
+
+So despite many successful turns, the action is actually poor on average.
+
+Over many trials, the learned value converges toward this expectation.
+
+---
+
+## Why can't the environment simply tell the agent?
+
+Because in many real problems, the future depends on factors that are not known in advance:
+
+* other drivers
+* pedestrians
+* weather
+* hidden obstacles
+* randomness
+* future decisions
+
+The environment itself "reveals" the consequence only after the action has been taken.
+
+This interaction model is exactly what distinguishes reinforcement learning from supervised learning. In supervised learning, the correct output is provided with the training data. In RL, the agent must **discover** which actions are good through trial-and-error interaction.
+
+---
+
+## How does this work for autonomous driving?
+
+In practice, autonomous driving systems almost never learn by crashing real cars repeatedly. Instead, they typically:
+
+1. Learn in high-fidelity simulators where millions of driving scenarios can be generated safely.
+2. Use imitation learning from large datasets of human driving to obtain a strong initial policy.
+3. Fine-tune with reinforcement learning or other optimization methods in simulation.
+4. Validate extensively before deployment, often with conservative safety constraints that prevent risky exploration in the real world.
+
+This avoids the unsafe trial-and-error that would be unacceptable on public roads.
+
+In summary, the agent does **not** know the reward of an action beforehand. It repeatedly interacts with the environment, observes the resulting rewards, updates its estimates of long-term action values (such as <Math latex="Q(s,a)" />), and gradually improves its policy while balancing exploration of new actions with exploitation of what it has already learned. This ability to learn from the consequences of actions, rather than being told their outcomes in advance, is the defining characteristic of reinforcement learning.

@@ -1,0 +1,41 @@
+Yes. If the value of a state is defined as **the expected total reward from that state under a particular policy**, then you must know the policy (or at least have assumptions about it) to determine how good the state is.
+
+Suppose Player A has a position where there is a difficult tactical combination that wins the queen in three moves.
+
+* A **grandmaster** or an optimal chess engine will almost certainly find it.
+* A **beginner** probably won't see it and may even blunder instead.
+
+From that exact same board position:
+
+* Under the grandmaster's policy, the expected future reward is very high.
+* Under the beginner's policy, the expected future reward could even be negative.
+
+So the "goodness" of the position depends on how the player is expected to act.
+
+### Isn't the position itself objectively good?
+
+There are two different notions that are often confused.
+
+1. **State value under a policy**
+
+   * "How good is this position if the player follows policy (\pi)?"
+   * This depends on the player's strategy.
+
+2. **Optimal state value**
+
+   * "How good could this position be if the best possible policy were followed?"
+   * This depends only on the environment (the chess rules and reward structure), not on any particular player's skill.
+
+So if someone simply says "Is this position good?", the answer is ambiguous unless they specify whether they mean:
+
+* good for **this particular player/policy**, or
+* objectively good assuming **optimal play**.
+
+### In reinforcement learning
+
+When learning, the agent is trying to improve its policy over time.
+
+* Early in learning, a state may have a low value because the agent doesn't know how to exploit it.
+* After learning a better policy, the **same state** may acquire a much higher value.
+
+Thus, the value function changes as the policy changes.

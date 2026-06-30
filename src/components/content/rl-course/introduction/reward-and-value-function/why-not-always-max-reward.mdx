@@ -1,0 +1,52 @@
+Knowing the **immediate reward** for each action is **not enough** to guarantee the best long-term outcome. In reinforcement learning, the objective is to **maximize the cumulative reward over time**, not just the reward received at the current step.
+
+Here are the main reasons:
+
+1. **Immediate vs. future rewards**
+
+   * An action with the highest immediate reward may lead to a poor future state.
+   * An action with a smaller immediate reward may move the agent to a state where it can earn much larger rewards later.
+
+   **Example:**
+
+   * Action A: Reward = +10 now, but leads to a dead end where future rewards are 0.
+   * Action B: Reward = +5 now, but leads to a state where the agent earns +20 on each of the next several steps.
+   * Although Action A gives the highest immediate reward, Action B results in a much higher total reward.
+
+2. **State transitions matter**
+
+   * An action changes not only the current reward but also the **next state**.
+   * The value of an action depends on both:
+
+     * the immediate reward, and
+     * the expected rewards obtainable from future states.
+
+3. **Stochastic rewards**
+
+   * Rewards may be random.
+   * An action with a high average reward might occasionally produce low rewards, while another action may be more reliable. The agent aims to maximize the **expected cumulative reward**.
+
+4. **Exploration vs. exploitation**
+
+   * Even if one action currently appears to give the highest reward, the agent may not know whether another action could lead to even better long-term outcomes.
+   * Therefore, the agent sometimes explores other actions to learn more about the environment.
+
+### Example
+
+Suppose an agent is in state **S**:
+
+| Action | Immediate Reward | Future Outcome                    |
+| ------ | ---------------- | --------------------------------- |
+| A      | +10              | Ends the episode                  |
+| B      | +4               | Leads to rewards of +10, +10, +10 |
+
+Total reward:
+
+* Action A = **10**
+* Action B = **4 + 10 + 10 + 10 = 34**
+
+Although Action A gives the highest immediate reward, Action B is the better choice because it maximizes the **total cumulative reward**.
+
+### Conclusion
+
+The agent does **not always choose the action with the highest immediate reward** because reinforcement learning seeks to maximize the **expected cumulative (discounted) reward** over time. An action's quality depends on both its immediate reward and the future rewards it enables.

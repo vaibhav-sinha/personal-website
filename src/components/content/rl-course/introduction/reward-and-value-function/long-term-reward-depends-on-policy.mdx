@@ -1,0 +1,58 @@
+import Math from "../../../Math.astro";
+
+Yes. In reinforcement learning, the answer depends on **which value function** you're talking about.
+
+The key distinction is between the **environment** and the **policy**.
+
+* The **reward function** is a property of the environment. Given a state and action (and possibly the next state), the environment determines the reward distribution.
+* The **value function** is **not** just a property of the environment. It is defined **with respect to a policy**.
+
+### Chess example
+
+Suppose the board position is exactly the same.
+
+* If Player A is a beginner who frequently blunders, the probability of eventually winning from that position may be only 20%.
+* If Player A is a grandmaster, the probability might be 90%.
+
+The **state** is identical, but the **expected return** differs because the future actions differ.
+
+So yes—the long-term expected reward depends on both:
+
+1. the current state, and
+2. the policy (or equivalently, the playing strategy).
+
+### Why don't RL books say "the value depends on the player"?
+
+In RL, the "player" **is** the policy.
+
+The agent is modeled as choosing actions according to some policy <Math latex="\pi(a \mid s)" />. Therefore, saying
+
+> "the value depends on the player"
+
+is mathematically the same as saying
+
+> "the value depends on the policy."
+
+### What if both players matter?
+
+Chess is a two-player game, so the future depends on **both** players' strategies.
+
+If Player A follows policy <Math latex="\pi_A" /> and Player B follows policy <Math latex="\pi_B" />, then more precisely,
+
+<Math display latex="V^{\pi_A,\pi_B}(s)" />
+
+is the expected outcome from state <Math latex="s" />.
+
+Many RL texts avoid this complication because they first study **single-agent Markov decision processes (MDPs)**, where the environment—including any randomness—is assumed to be fixed. In that setting there is only one policy, the agent's.
+
+For games like chess, the environment includes another intelligent agent. You can think of the opponent as part of the environment, but then the environment's dynamics depend on the opponent's policy. Consequently, the value of a position depends on **both players' strategies**.
+
+### Is there ever a value that depends only on the state?
+
+Only after fixing the policy (or policies). Once <Math latex="\pi" /> is fixed, <Math latex="V^\pi(s)" /> is indeed a function only of the state:
+
+<Math display latex="s \mapsto V^\pi(s)." />
+
+Without specifying the policy, asking "What is the value of this chess position?" is incomplete, because different strategies lead to different expected returns.
+
+This is why chess engines typically report an evaluation under an implicit assumption: that **both sides will play optimally** (or according to the engine's search). Under that assumption, each board position has a well-defined value.

@@ -1,0 +1,99 @@
+import Math from "../../../Math.astro";
+
+No. Requiring the reward to be a single numeric value does **not** significantly limit the range of applications for reinforcement learning (RL). The key idea is that **any objective the agent should optimize must ultimately be represented as a scalar (single-number) signal**. This is actually a strength of the RL framework because it provides a clear optimization target.
+
+Here's why:
+
+### 1. The reward does not have to be the "physical" reward
+
+In many real-world applications, the actual benefit is something tangible rather than a number.
+
+For example:
+
+* A warehouse robot successfully delivers a package.
+* A self-driving car reaches its destination safely.
+* A recommendation system keeps a user engaged.
+* A trading agent earns money.
+
+These outcomes are naturally converted into numerical rewards, for example:
+
+* Package delivered → +100
+* Collision → -1000
+* Each minute of delay → -1
+* Profit earned → actual profit in dollars
+* Customer purchase → +10
+
+The numbers are simply a mathematical representation of the desired behavior.
+
+---
+
+### 2. Even tangible rewards can be quantified
+
+Suppose the reward is "a gold coin."
+
+The agent doesn't need to receive an actual coin. The environment can assign
+
+* Gold coin collected → +1
+* Diamond collected → +5
+* Treasure chest → +20
+
+The numerical reward represents the value of the tangible object.
+
+---
+
+### 3. What if there are multiple objectives?
+
+Real-world tasks often involve several competing goals.
+
+For example, a self-driving car should
+
+* arrive quickly,
+* avoid collisions,
+* minimize fuel consumption,
+* keep passengers comfortable.
+
+These can be combined into a single reward, for example
+
+<Math
+  display
+  proof
+  latex="R = 100 \times \text{destination reached} \\
+-1000 \times \text{collision} \\
+-0.5 \times \text{fuel used} \\
+-2 \times \text{hard braking}"
+/>
+
+The exact weights depend on what behavior is desired.
+
+---
+
+### 4. Does converting everything to one number lose information?
+
+Sometimes, yes.
+
+If two objectives cannot easily be traded off, compressing them into a single scalar reward can be challenging. This is known as the **reward design problem**.
+
+For example:
+
+* Should saving 1 minute of travel time be worth a 1% increase in accident risk?
+* How much should comfort be sacrificed for fuel efficiency?
+
+Choosing these trade-offs is often one of the hardest parts of applying RL.
+
+To address this, researchers study approaches such as **multi-objective reinforcement learning**, where several objectives are optimized simultaneously rather than immediately combining them into one scalar.
+
+---
+
+### 5. Why must the reward be a scalar?
+
+Most RL algorithms aim to maximize the **expected cumulative reward**
+
+<Math display latex="\mathbb{E}\left[\sum_{t=0}^{\infty} \gamma^t R_t\right]" />
+
+To compare different policies, the algorithm needs a single value indicating which outcome is better. A scalar reward provides a total ordering of outcomes, making optimization mathematically well-defined.
+
+---
+
+### Conclusion
+
+A scalar reward does **not** restrict RL to purely numerical or artificial problems. Any real-world objective—whether money, completed deliveries, customer satisfaction, energy efficiency, or game score—can usually be represented by a numerical reward signal. The main challenge is not that rewards must be numbers, but **designing a reward function that accurately captures the behavior you want the agent to learn**.

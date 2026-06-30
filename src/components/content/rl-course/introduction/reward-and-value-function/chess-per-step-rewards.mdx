@@ -1,0 +1,123 @@
+import Math from "../../../Math.astro";
+
+The short answer is: **all of those are possible**, but they lead to different learning problems. The key distinction is between the **true objective** (what you actually want the agent to optimize) and **reward shaping** (additional rewards that help the agent learn).
+
+For chess, here are the common choices:
+
+### 1. Reward only for winning (sparse reward)
+
+For example:
+
+* +1 for a win
+* 0 for a draw
+* -1 for a loss
+* 0 on every intermediate move
+
+This is the most natural formulation because it exactly matches the objective of chess.
+
+**Advantages**
+
+* The agent cannot exploit the reward in unintended ways.
+* The optimal policy is exactly the one that maximizes winning.
+
+**Disadvantages**
+
+* Learning is difficult because rewards are extremely sparse.
+* A game may last 50–100 moves before any feedback is received.
+* Credit assignment becomes challenging: which earlier moves caused the eventual win?
+
+Many successful reinforcement learning systems (such as those inspired by self-play approaches) use essentially this reward structure.
+
+---
+
+### 2. Reward for capturing pieces (dense reward)
+
+For example:
+
+* +1 for capturing a pawn
+* +3 for capturing a bishop
+* +5 for capturing a rook
+* +9 for capturing a queen
+
+This gives much more frequent feedback.
+
+However, it changes the optimization problem.
+
+An agent may learn to:
+
+* maximize captured material,
+* even if that decreases its probability of winning.
+
+For example, suppose:
+
+* Move A wins immediately.
+* Move B captures a queen but eventually loses.
+
+If the capture reward is large enough, the agent may prefer Move B.
+
+---
+
+### 3. Negative reward when losing pieces
+
+Similarly, one could assign
+
+* -1 when losing a pawn,
+* -9 when losing a queen.
+
+Again, this encourages preserving material.
+
+This often aligns with good play, but not always.
+
+Sometimes the best chess move is to sacrifice a queen to force checkmate. A material-based reward would discourage exactly those sacrifices.
+
+---
+
+### 4. Combining terminal and intermediate rewards
+
+A common approach is something like
+
+* +1 for win
+* -1 for loss
+* small rewards for useful intermediate events
+
+This is called **reward shaping**.
+
+The shaping rewards should ideally help exploration without changing which policy is ultimately optimal.
+
+---
+
+## The danger of reward shaping
+
+Suppose you define
+
+* +1 for every captured opponent piece.
+
+An agent might discover that repeatedly allowing exchanges creates more captures than simply delivering checkmate quickly.
+
+Even stranger reward exploits can occur in more complex environments. This is why reward design is considered one of the hardest parts of reinforcement learning.
+
+---
+
+## Potential-based reward shaping
+
+There is a well-known theoretical result: if shaping rewards are defined as
+
+<Math display latex="F(s,s')=\gamma\Phi(s')-\Phi(s)," />
+
+where <Math latex="\Phi" /> is a potential function over states, then the optimal policy is guaranteed to remain unchanged.
+
+This is called **potential-based reward shaping** and is one of the safest ways to add intermediate rewards.
+
+---
+
+## Which would I choose for chess?
+
+If the goal is simply to learn to play chess as well as possible:
+
+* **Primary reward:** only the game outcome (+1 win, 0 draw, -1 loss).
+
+If learning is too slow:
+
+* Add carefully designed shaping rewards that do not alter the desired objective, preferably using potential-based shaping or evaluation functions that approximate progress toward winning.
+
+I would generally **not** use raw piece-capture rewards as the main objective, because chess is full of situations where sacrificing material is the correct move. The reward should ultimately reflect what you care about—**winning the game**, not merely accumulating material.
