@@ -72,8 +72,8 @@ Now, based on your choice of properties, answer the following questions:
     Did you treat the position as a continuous variable or a discrete one?
   </Question>
 
-  <Question prompt={carGamePrompt("If position is assumed to be continuous, would that mean that the number of states are infinite?")}>
-    If position is assumed to be continuous, would that mean that the number of states are infinite?
+  <Question prompt={carGamePrompt("If position is assumed to be continuous, would that mean that the number of states is infinite?")}>
+    If position is assumed to be continuous, would that mean that the number of states is infinite?
 
     <ContinuousPositionInfiniteStates slot="answer" />
   </Question>
@@ -118,8 +118,8 @@ Based on your choice, answer the following questions:
     <MarkovFutureDependsOnPresent slot="answer" />
   </Question>
 
-  <Question prompt={carGamePrompt("In the first state representation we did not need to include the past while in the second we do. The game environment and the problem statement is the same. Is there a contradiction here?", [carGameThinkingExerciseApi, carGameThinkingExerciseImages])}>
-    In the first state representation we did not need to include the past while in the second we do. The game environment and the problem statement is the same. Is there a contradiction here?
+  <Question prompt={carGamePrompt("In the first state representation we did not need to include the past while in the second we do. The game environment and the problem statement are the same. Is there a contradiction here?", [carGameThinkingExerciseApi, carGameThinkingExerciseImages])}>
+    In the first state representation we did not need to include the past while in the second we do. The game environment and the problem statement are the same. Is there a contradiction here?
 
     <ObservationVsStateContradiction slot="answer" />
   </Question>
@@ -163,8 +163,8 @@ Answer the following questions about policies:
 </div>
 
 
-<ThinkingExercise prompt={"Explain what is an environment and what does it mean for an environment to be stochastic or stationary in the context of RL?"}>
-  An environment was never formally defined. Based on the questions above and after discussing them with AI, can you now explain what is an environment and what does it mean for an environment to be stochastic or stationary?
+<ThinkingExercise prompt={"Explain what an environment is and what it means for an environment to be stochastic or stationary in the context of RL."}>
+  An environment was never formally defined. Based on the questions above and after discussing them with AI, can you now explain what an environment is and what it means for an environment to be stochastic or stationary?
 
   <EnvironmentExerciseAnswer slot="answer" />
 </ThinkingExercise>
@@ -174,7 +174,7 @@ Answer the following questions about policies:
 
 An agent which interacts with an environment is given a numeric reward on each time step which depends on the state the agent is in,
 and the action that is taken by the agent. The reward provided is a property of the environment. Rewards can also be stochastic i.e.
-for the same chosen action in a given state, the agent might get different rewards different times. The objective of the agent is to collect
+for the same chosen action in a given state, the agent might get different rewards at different times. The objective of the agent is to collect
 as much reward as possible over time. The rewards guide the agent in learning what actions to take in different states.
 
 Based on your understanding of rewards until now, answer the following questions. 
@@ -187,9 +187,9 @@ Based on your understanding of rewards until now, answer the following questions
     <NumericRewardApplicationLimitations slot="answer" />
   </Question>
 
-  <Question prompt={rewardPrompt("Rewards are defined to be provided per time step. Let's take the example of a game of chess. Would you choose to assign positive rewards whenever an agent takes one of opponent pieces? Or would you assign positive reward only if the agent wins the game? What about assigning negative rewards when the agent's pieces are taken by the opponent?")}>
+  <Question prompt={rewardPrompt("Rewards are defined to be provided per time step. Let's take the example of a game of chess. Would you choose to assign positive rewards whenever an agent takes one of the opponent's pieces? Or would you assign positive reward only if the agent wins the game? What about assigning negative rewards when the agent's pieces are taken by the opponent?")}>
     Rewards are defined to be provided per time step. Let's take the example of a game of chess. Would you choose to assign positive
-    rewards whenever an agent takes one of opponent pieces? Or would you assign positive reward only if the agent wins the game? What about
+    rewards whenever an agent takes one of the opponent's pieces? Or would you assign positive reward only if the agent wins the game? What about
     assigning negative rewards when the agent's pieces are taken by the opponent?
 
     <ChessPerStepRewards slot="answer" />
@@ -211,8 +211,8 @@ Based on your understanding of rewards until now, answer the following questions
     <WhyNotAlwaysMaxReward slot="answer" />
   </Question>
 
-  <Question prompt={rewardPrompt("Can a strategy which always takes the action which yields the highest reward in each state still end up being worse that other strategies?")}>
-    Can a strategy which always takes the action which yields the highest reward in each state still end up being worse that other strategies?
+  <Question prompt={rewardPrompt("Can a strategy which always takes the action which yields the highest reward in each state still end up being worse than other strategies?")}>
+    Can a strategy which always takes the action which yields the highest reward in each state still end up being worse than other strategies?
 
     <GreedyStrategyWorseThanOthers slot="answer" />
   </Question>
@@ -248,7 +248,7 @@ Once you have spent some time thinking about it, try and answer the following qu
 <div class="my-4 space-y-4">
   <Question prompt={rewardValuePrompt("Ignoring the winning or losing states, for all the other states, do you need to know anything about the player A (their skill level, playing strategy, etc) to determine if a position is good or not? Why?")}>
     Ignoring the winning or losing states, for all the other states, do you need to know anything about the player A (their skill level, playing strategy, etc)
-    to determineis a position is good or not? Why?
+    to determine if a position is good or not? Why?
 
     <PlayerInfoForPositionQuality slot="answer" />
   </Question>
@@ -261,7 +261,7 @@ Once you have spent some time thinking about it, try and answer the following qu
   </Question>
 </div>
 
-How good is a state is measured by its value function. The value function is the expected total reward from that state given a particular policy (policy is the strategy of a player).
+How good a state is is measured by its value function. The value function is the expected total reward from that state given a particular policy (policy is the strategy of a player).
 We can obviously have a value function for a state which does not depend on a particular policy. In that case, we could calculate the 
 expected value of that state by calculating the expectation over all the possible policies. The distribution of policies might be
 considered uniform. But in actual learning process, we care about how good is a state for a particular policy, not in general. This will
@@ -275,3 +275,6 @@ interacting with the actual environment. It seems quite obvious that having a mo
 since we can get to know what the environment will do. For example, if the agent was trying to learn how to drive a car, a model of
 the world could tell it what would happen if a particular steering action was taken. However, it also seems quite unlikely that such
 a model would be available for most of the problems involving complex environments. 
+
+The introduction is just to give a high level sense of the subject and to introduce a few terminologies. It is not expected for you to
+understand things deeply at this time. As we proceed further and topics are discussed in detail, they will become clearer.
