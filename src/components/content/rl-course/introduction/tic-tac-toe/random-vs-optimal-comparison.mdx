@@ -1,0 +1,7 @@
+Train against an opponent that exposes the agent to **more diverse game situations**.
+
+**RandomOpponent** is a step in that direction: it does not follow a single deterministic line, so the agent visits more board configurations and cannot overfit to one opening.
+
+**Agent vs agent** goes further. Both players use ε-greedy policies, so each game explores different lines. As both improve, each effectively trains against progressively stronger — but still exploratory — opposition. That co-evolution approximates playing many opponents without hard-coding optimal play.
+
+Neither approach guarantees optimality immediately, but they widen the state distribution the value table must cover, which is why performance against **OptimalOpponent** can improve even when the agent never trains against it directly.

@@ -1,0 +1,7 @@
+The score stays at −10 because the agent learned a policy specialised for the **FirstEmptyPositionOpponent**, not for optimal play.
+
+That opponent always plays the first empty cell in row-major order. The agent, playing second as X, learns a counter-strategy for that one predictable opening and sequence of replies. Against **OptimalOpponent** (minimax perfect play), those moves are easily punished.
+
+Because the opponent always moves first with the same opening, the agent never visits states where it must respond to other first moves. Its value table is sparse and biased toward one branch of the game tree.
+
+With more training games the reference-eval score does not improve further — it was already at the ceiling for that opponent. More training cannot fix generalisation to optimal play when the training distribution never includes it.

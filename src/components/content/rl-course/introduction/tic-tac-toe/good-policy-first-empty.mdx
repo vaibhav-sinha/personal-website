@@ -1,0 +1,9 @@
+No — not in a general sense. The agent has learned a policy that works well against the **FirstEmptyPositionOpponent**, which is why the reference-eval score is 10 (10 wins, 0 losses) even with only 10,000 training games.
+
+But that is not the same as learning tic-tac-toe optimally:
+
+- **The opponent is part of the environment.** The agent learned values and a policy tailored to one specific opponent behaviour. Change the opponent and you have changed the environment — the same board position can lead to different future outcomes.
+- **The opponent always opens with the same first move** (top-left, because that is the first empty cell in row-major order). The agent never experiences other opening moves during training, so it cannot learn how to respond to them.
+- **Evaluating only against the training opponent is misleading.** A perfect score against a weak, deterministic opponent does not imply strong play against a skilled opponent.
+
+A policy can be "good" only relative to the environment (including the opponent) it was trained in.

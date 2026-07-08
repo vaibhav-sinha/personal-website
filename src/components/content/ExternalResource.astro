@@ -3,7 +3,7 @@ interface Props {
   href: string;
   title: string;
   description: string;
-  type?: "paper" | "video" | "docs" | "article" | "book";
+  type?: "paper" | "video" | "docs" | "article" | "book" | "code";
 }
 
 const { href, title, description, type = "article" } = Astro.props;
@@ -14,6 +14,7 @@ const typeLabels: Record<NonNullable<Props["type"]>, string> = {
   docs: "Docs",
   article: "Article",
   book: "Book",
+  code: "Code",
 };
 ---
 

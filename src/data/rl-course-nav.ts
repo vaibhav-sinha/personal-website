@@ -41,7 +41,16 @@ export const rlCourseNav: NavSection[] = [
   {
     section: "Foundations",
     items: [
-      { slug: "introduction", title: "Introduction" },
+      {
+        slug: "introduction",
+        title: "Introduction",
+        children: [
+          {
+            slug: "introduction/tic-tac-toe",
+            title: "Tic Tac Toe",
+          },
+        ],
+      },
       {
         slug: "markov-decision-processes",
         title: "Markov Decision Processes",

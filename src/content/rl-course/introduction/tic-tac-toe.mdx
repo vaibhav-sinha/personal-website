@@ -1,0 +1,311 @@
+---
+title: Tic Tac Toe
+description: Learn Sutton & Barto Chapter 1 value learning by implementing and training a tic-tac-toe agent step by step.
+section: Foundations
+order: 1.1
+---
+
+import BookReading from "../../../components/content/BookReading.astro";
+import CodeBlock from "../../../components/content/CodeBlock.astro";
+import ExternalResource from "../../../components/content/ExternalResource.astro";
+import Math from "../../../components/content/Math.astro";
+import Question from "../../../components/content/Question.astro";
+import QuestionAnswer from "../../../components/content/QuestionAnswer.astro";
+import TicTacToeBoard from "../../../components/content/TicTacToeBoard.tsx";
+import GreedyMoveWalkthrough from "../../../components/content/GreedyMoveWalkthrough.tsx";
+import ValueUpdateWalkthrough from "../../../components/content/ValueUpdateWalkthrough.tsx";
+import TrainingResultsChart from "../../../components/content/TrainingResultsChart.tsx";
+import GoodPolicyFirstEmpty from "../../../components/content/rl-course/introduction/tic-tac-toe/good-policy-first-empty.mdx";
+import WhyOptimalEvalFails from "../../../components/content/rl-course/introduction/tic-tac-toe/why-optimal-eval-fails.mdx";
+import RandomVsOptimalComparison from "../../../components/content/rl-course/introduction/tic-tac-toe/random-vs-optimal-comparison.mdx";
+import {
+  gameSnippet,
+  playerSnippet,
+  agentInitSnippet,
+  boardIndexSnippet,
+  agentMoveSnippet,
+  agentUpdateSnippet,
+  firstEmptyOpponentSnippet,
+  randomOpponentSnippet,
+  optimalOpponentSnippet,
+  trainerSnippet,
+  runnerSnippet,
+} from "../../../data/rl-course/tic-tac-toe-code";
+import { ticTacToePrompt } from "../../../data/rl-course/tic-tac-toe-prompts";
+
+This lesson walks through the **value-learning** algorithm from Sutton & Barto Chapter 1 by implementing it for the game Tic Tac Toe.
+This is just to get a sense of what a RL algorithm looks like and how a task can be formulated as a RL problem.
+
+Full runnable code for this lesson is in the companion repository.
+
+<ExternalResource
+  href="https://github.com/vaibhav-sinha/RL-Course-Code-Samples/tree/main/introduction-tic-tac-toe"
+  title="Value learning algorithm"
+  description="Runnable Python code for Tic Tac Toe player using value-learning algorithm."
+  type="code"
+/>
+
+## The game
+
+Tic-tac-toe is played on a 3×3 grid. Two players take turns placing their mark in an empty cell. The first to complete a row, column, or diagonal wins. If the board fills with no winner, the game is a draw.
+
+<TicTacToeBoard
+  client:visible
+  board={[[-1, 1, 0], [0, -1, 0], [0, 1, -1]]}
+  caption="O wins by completing a diagonal."
+/>
+
+<div class="my-4 space-y-4">
+  <Question>
+    How would you frame playing Tic-Tac-Toe as a reinforcement learning problem? What would be the state, action, reward and episode?
+
+    <QuestionAnswer slot="answer">
+      We frame this as the following reinforcement learning problem:
+
+- **State** — the current board configuration (nine cells, each empty, O, or X).
+- **Action** — choose any empty cell.
+- **Reward** — given only at the end of the episode: +1 for a win, −1 for a loss, 0 for a draw.
+- **Episode** — one complete game from the opening move to a terminal outcome.
+
+In our implementation, **O** is encoded as `−1`, **empty** as `0`, and **X** as `+1`.
+    </QuestionAnswer>
+  </Question>
+</div>
+
+## Value learning
+
+<BookReading
+  href="http://incompleteideas.net/book/the-book.html"
+  bookTitle="Reinforcement Learning: An Introduction"
+  authors="Sutton & Barto"
+  chapter={1}
+  section="Section 1.5"
+/>
+
+Value learning works by estimating how good each state is under the agent's current policy. We store a **tabular value function** — one number `V(s)` per board configuration.
+
+After each game, we apply an update to every state the agent visited:
+
+<Math
+  display
+  latex="V(s) \leftarrow V(s) + \alpha \bigl(R - V(s)\bigr)"
+/>
+
+where `R` is the terminal reward and `α` is the learning rate.
+
+Let's try and understand the above update rule in the context of the current problem. We will take one state and think about what the above rule would do for it.
+Let's say the agent reaches that state in a game. After few more moves, if the agent wins the game, then we would think that this was
+a good state to be in. Since the value of the state represents how good is a state, we would want to increase the value for this state.
+On winning, the reward is +1. What we want is to increase the value of the state so that it is closer to this reward. Hence we take the
+difference between the reward and the current value and then increment the current value by a step which is proportional to the delta.
+If the current value of the state is 0.2, then there is a large difference between it and the target value of 1, and hence we want to take
+a larger step. The proportionality factor is `α`. Similarly, if we lose a game from that state, we would want to reduce the value of 
+the state so that it moves closer to -1, the reward the agent gets when it loses. 
+
+The agent chooses moves with an **ε-greedy policy**: with probability ε it plays a random legal move; otherwise it picks the move whose **successor state** has the highest stored value.
+We need to use a policy which sometimes plays random legal moves so that it can explore different positions and learn which positions
+might be good. 
+
+
+## The environment
+
+`game.py` implements the `TicTacToe` game. It maintains the game state and encodes the rules of the game by providing methods to
+check if the game has finished and declare a winner.
+
+The game defines the environment for this problem. However, it is a partial environment. The complete environment, from the agent's
+perspective, is the game **and** the opponent it plays against.
+
+<CodeBlock lang="python" title="game.py" code={gameSnippet} />
+
+The board maintains the game state in a 3×3 list. The players make a move by calling `set_position`. 
+`is_over` returns whether the game ended and the winner (`−1` for `O`, `0` for draw, or `+1` for `X`).
+
+### Player
+
+Both the learning agent and the opponents are **players**. `game.py` defines a common interface they all implement:
+
+<CodeBlock lang="python" title="game.py — Player" code={playerSnippet} />
+
+Every player is constructed with a **symbol** — `−1` for O or `+1` for X. That symbol is the mark the player places on the board when it is their turn.
+
+`move` is the only method subclasses must implement. The game loop calls `move(game)` on the current player; the player reads the board from `game`, chooses a position, and updates the board by calling `game.set_position`.
+
+`on_result` is optional. It is called once when the game ends, with the final winner (`−1`, `0` for a draw, or `+1`). The default implementation does nothing. Our learning **Agent** overrides it to run the value update; scripted opponents leave it unchanged.
+
+This split keeps the game rules in `TicTacToe` and puts all decision-making in `Player` subclasses — whether that is a fixed rule, random play, minimax, or a learned policy.
+
+## The agent
+
+### State table and indexing
+
+The agent keeps `state_values` — a list of length 3⁹ = 19,683 — and maps each board to an index with base-3 encoding:
+
+<CodeBlock lang="python" title="agent.py — initialisation" code={agentInitSnippet} />
+
+<CodeBlock lang="python" title="agent.py — board index" code={boardIndexSnippet} />
+
+Each cell contributes `(cell + 1)` ∈ `{0, 1, 2}` so that `−1 → 0`, `0 → 1`, `+1 → 2`. Scanning row-major builds a unique integer per board.
+
+<TicTacToeBoard
+  client:visible
+  board={[[-1, 0, 0], [0, 0, 0], [0, 0, 0]]}
+  caption="After O plays top-left: this board maps to one index in the value table."
+/>
+
+### Choosing a move
+
+<CodeBlock lang="python" title="agent.py — move" code={agentMoveSnippet} />
+
+<GreedyMoveWalkthrough client:visible />
+
+The greedy branch evaluates every legal move by cloning the board, playing the move, and reading `V(s')` from the table. The move leading to the highest successor value wins.
+
+### Updating values after the game
+
+When the episode ends, `on_result` applies the same terminal reward to every state recorded in `states_encountered`:
+
+<CodeBlock lang="python" title="agent.py — on_result" code={agentUpdateSnippet} />
+
+<ValueUpdateWalkthrough client:visible />
+
+The update pushes each visited state's value toward the actual return `R`. States that tend to precede wins drift positive; states that precede losses drift negative.
+
+## Training and evaluation
+
+`learner.py` wires games together. `Trainer` plays `num_games` training episodes: **player1 (opponent) always moves first**, then the agent.
+
+<CodeBlock lang="python" title="learner.py — Trainer" code={trainerSnippet} />
+
+`Runner` trains a fresh agent, switches off learning, then evaluates twice — once against the **reference opponent** (same as training) and once against a held-out benchmark:
+
+<CodeBlock lang="python" title="learner.py — Runner" code={runnerSnippet} />
+
+## Part 1 — First empty position opponent
+
+We start with the simplest opponent: it always plays the **first empty cell** in row-major order.
+
+<CodeBlock lang="python" title="opponent.py — FirstEmptyPositionOpponent" code={firstEmptyOpponentSnippet} />
+
+Because O always moves first, this opponent's opening is always top-left. The agent only ever trains on games that begin that way.
+
+We train for increasing numbers of games (10k, 20k, … 90k) and evaluate after each run. The chart below shows the score against the **same training opponent**:
+
+<TrainingResultsChart
+  client:visible
+  scenario="first_empty_position_opponent"
+  series={["reference"]}
+  title="Part 1 — vs FirstEmptyPositionOpponent"
+/>
+
+The score reaches 10 quickly and stays there. With even 10,000 games the agent has seen enough of this deterministic opponent to win every eval game.
+
+### Why performance can be poor with few training games
+
+With very few games, most board indices are never visited. ε-greedy exploration means early episodes are noisy. The value table stays near zero, so greedy play is effectively arbitrary — wins against a weak opponent are not yet reliable. As training games accumulate, the agent revisits the same lines repeatedly and values converge for the states on those lines.
+
+<Question prompt={ticTacToePrompt("After training against FirstEmptyPositionOpponent, has the agent learnt a good policy?")}>
+  After training against **FirstEmptyPositionOpponent**, has the agent learnt a good policy?
+
+  <GoodPolicyFirstEmpty slot="answer" />
+</Question>
+
+## Evaluating against the optimal opponent
+
+To test generalisation we evaluate against **OptimalOpponent** — a minimax player that never loses (win or draw from its perspective). We introduce it only for evaluation, not training.
+
+<CodeBlock lang="python" title="opponent.py — OptimalOpponent (move selection)" code={optimalOpponentSnippet} />
+
+<TrainingResultsChart
+  client:visible
+  scenario="first_empty_position_opponent"
+  series={["optimal"]}
+  title="Part 1 — same agent vs OptimalOpponent"
+/>
+
+The score stays at **−10**: the agent loses every eval game. It mastered one weak opponent but not optimal play.
+
+<Question prompt={ticTacToePrompt("Why does an agent trained against FirstEmptyPositionOpponent lose every game against OptimalOpponent?")}>
+  Why does an agent trained against **FirstEmptyPositionOpponent** lose every game against **OptimalOpponent**?
+
+  <WhyOptimalEvalFails slot="answer" />
+</Question>
+
+## Part 2 — Random opponent
+
+A better training opponent should let the agent **explore more policies**. **RandomOpponent** picks a uniformly random empty cell each turn.
+
+<CodeBlock lang="python" title="opponent.py — RandomOpponent" code={randomOpponentSnippet} />
+
+<TrainingResultsChart
+  client:visible
+  scenario="random_opponent"
+  series={["reference", "optimal"]}
+  title="Part 2 — RandomOpponent training"
+/>
+
+Against the training opponent, scores are high but not always perfect — random play is less predictable, so early training runs can still drop a game or two.
+
+Against **OptimalOpponent**, the score improves from −10 toward 0 (more draws, fewer losses) as training games increase. The agent sees a wider variety of board states and learns defensive play that optimal X can use when playing second.
+
+With few training games, variance is high: a lucky or unlucky eval batch of only 10 games can swing the score. More training stabilises both the value estimates and the eval metric.
+
+<Question prompt={ticTacToePrompt("How can we learn a better policy without training directly against OptimalOpponent?")}>
+  How can we learn a better policy without training directly against **OptimalOpponent**?
+
+  <RandomVsOptimalComparison slot="answer" />
+</Question>
+
+## Part 3 — Agent vs agent
+
+Finally, both sides are learning **Agent** instances with the same ε-greedy policy. Each player updates its own value table during training.
+
+- The training opponent is exploratory (ε-greedy), not fixed.
+- As both improve, each faces progressively stronger — but still stochastic — opposition.
+- Neither player is optimal, but co-evolution exposes both to rich game trajectories.
+
+<TrainingResultsChart
+  client:visible
+  scenario="agent_opponent"
+  series={["reference", "optimal"]}
+  title="Part 3 — Agent vs agent training"
+/>
+
+Against the training partner, scores cluster near 0 — both agents are learning, so eval games are often draws.
+
+Against **OptimalOpponent**, performance improves further: with 40k training games the agent draws all 10 eval games (score 0). Self-play with exploration approximates training against a diverse, improving pool of opponents.
+
+## Comparing optimal-eval performance
+
+Overlaying optimal-eval scores from all three training regimes:
+
+<TrainingResultsChart
+  client:visible
+  compareOptimal
+  title="Optimal-opponent eval across training regimes"
+/>
+
+**First empty position** never generalises (flat at −10). **Random** and **agent vs agent** both improve with more training games, with self-play reaching the strongest optimal-eval results in this experiment.
+
+## Why more training games help
+
+Across all three parts, low training budgets hurt for the same underlying reasons:
+
+- **Sparse coverage** — most of the 19,683 states are never visited in a handful of games.
+- **Noisy updates** — ε-greedy exploration and random opponents inject variance into which states get updated and by how much.
+- **Delayed signal** — reward arrives only at episode end, so early value estimates are rough until similar trajectories repeat.
+- **Opponent-specific learning** — against a fixed weak opponent, extra training helps only until the policy saturates for that opponent; it does not automatically transfer to a different one.
+
+More training games let the agent revisit important states, average out exploration noise, and — when the opponent is diverse enough — build values that transfer to stronger held-out opponents like **OptimalOpponent**.
+
+## Summary
+
+| Idea | Takeaway |
+|------|----------|
+| State values | One number per board; greedy play uses `V(s')` of successor states |
+| Monte Carlo update | Terminal reward backs up to all visited states |
+| Opponent = environment | Good eval against the training opponent ≠ good play in general |
+| Fixed opening | Opponent-first with deterministic O fixes the first move — limits what X learns |
+| Exploration | Random and self-play opponents widen the training distribution |
+| Evaluation | Always test against held-out opponents; score = wins − losses over 10 games |
+
+The code samples for this lesson are in the `introduction-tic-tac-toe` directory of the RL course code repository. Run `learner.py` to regenerate `results.json` for new experiment sweeps.
